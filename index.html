@@ -130,7 +130,7 @@ body{background:#080a16}
 .desk-icon:hover,.desk-icon.selected{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.22)}
 .desk-icon .di{display:grid;place-items:center;width:43px;height:43px;border-radius:13px;font-size:23px;box-shadow:inset 0 1px 1px #ffffff80,0 6px 14px #0004;border:1px solid #ffffff25;text-shadow:none}
 .desk-icon .label{font-size:11px;line-height:1.2;text-align:center;max-width:76px;overflow-wrap:anywhere}
-.di.files{background:linear-gradient(145deg,#6edcff,#2879fa)}.di.code{background:linear-gradient(145deg,#58bbff,#6557ee)}.di.term{background:linear-gradient(145deg,#384155,#101522)}.di.ai{background:linear-gradient(145deg,#ff9fe7,#8d68ff)}.di.set{background:linear-gradient(145deg,#cad4e7,#67738d)}.di.notes{background:linear-gradient(145deg,#ffe995,#ffac53)}
+.di.voice{background:linear-gradient(145deg,#53e1d5,#2563eb 55%,#7038d9)}.di.files{background:linear-gradient(145deg,#6edcff,#2879fa)}.di.code{background:linear-gradient(145deg,#58bbff,#6557ee)}.di.term{background:linear-gradient(145deg,#384155,#101522)}.di.ai{background:linear-gradient(145deg,#ff9fe7,#8d68ff)}.di.set{background:linear-gradient(145deg,#cad4e7,#67738d)}.di.notes{background:linear-gradient(145deg,#ffe995,#ffac53)}
 #deskWidget{position:absolute;right:26px;top:16px;width:244px;padding:17px 18px 15px;border-radius:20px;background:rgba(20,23,43,.32);border:1px solid rgba(255,255,255,.24);box-shadow:inset 1px 1px 0 #ffffff26,0 14px 40px #0002;backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);text-shadow:none;pointer-events:none}
 #deskWidget .dw-eyebrow{font-size:10px;letter-spacing:1px;text-transform:uppercase;opacity:.72}
 #heroTime{font-size:39px;font-weight:250;letter-spacing:-1.5px;line-height:1.2;margin:7px 0 2px;font-variant-numeric:tabular-nums}
@@ -321,6 +321,7 @@ html,body{touch-action:pan-x pan-y!important;overscroll-behavior:none!important}
   <button class="desk-icon" data-app="code" title="打开代码工作室"><span class="di code">💻</span><span class="label">开发工作室</span></button>
   <button class="desk-icon" data-app="term" title="打开终端"><span class="di term">⌘</span><span class="label">终端</span></button>
   <button class="desk-icon" data-app="ai" title="打开 AI 助手"><span class="di ai">✦</span><span class="label">AI 助手</span></button>
+  <button class="desk-icon" data-app="voice" title="打开 AI 语音助手"><span class="di voice">🎙️</span><span class="label">AI语音助手</span></button>
   <button class="desk-icon" data-app="notes" title="打开便签"><span class="di notes">📝</span><span class="label">便签</span></button>
   <button class="desk-icon" data-app="set" title="打开系统设置"><span class="di set">⚙</span><span class="label">系统设置</span></button>
   <button class="desk-icon" data-app="games" title="打开游戏大厅"><span class="di games" style="background:linear-gradient(145deg,#ffb86c,#f43f8e)">🎮</span><span class="label">游戏大厅</span></button>
@@ -465,6 +466,14 @@ function fAI(b){
  };
  send.onclick=go;i.onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing&&!e.shiftKey){e.preventDefault();go()}};
 }
+
+function fVoice(b){
+ const url='https://wzh131213-dev.github.io/yuyanai.github.io/';
+ b.style.cssText+=';padding:0;overflow:hidden;min-width:0';
+ b.innerHTML='<div style="display:flex;flex-direction:column;width:100%;height:100%;min-height:0;background:#070b16;color:#e5e7eb"><div style="display:flex;align-items:center;gap:8px;padding:8px 10px;flex:0 0 auto;background:#111827;border-bottom:1px solid #ffffff20"><b style="font-size:12px">🎙️ Gemini Live 实时语音助手</b><span style="flex:1"></span><button type="button" class="bt" data-voice-open>单独打开 ↗</button></div><div style="padding:7px 10px;font-size:11px;line-height:1.45;color:#b7c4dc;background:#0b1020;flex:0 0 auto">填写 Gemini API Key 后建立 Live 连接。首次使用需允许麦克风；摄像头功能需另行授权。若内嵌模式无法使用设备，请点「单独打开」。</div><iframe title="AI语音助手" src="'+url+'" style="display:block;flex:1 1 auto;width:100%;height:100%;min-height:0;border:0;background:#070b16" allow="microphone *; camera *; autoplay *; fullscreen *" allowfullscreen></iframe></div>';
+ b.querySelector('[data-voice-open]').onclick=()=>window.open(url,'_blank','noopener');
+}
+
 function fTerm(b){
  b.className+=' tm';
  const o=H('div'),i=H('input');b.append(o,i);
@@ -538,6 +547,7 @@ function fGames(b){
 const A={
  code:{t:'代码',i:'💻',c:['#4f8cff','#7a5cff'],w:720,h:440,f:fCode},
  ai:{t:'AI 助手',i:'✨',c:['#ff7ac8','#ff9f5a'],w:420,h:520,f:fAI},
+  voice:{t:'AI语音助手',i:'🎙️',c:['#53e1d5','#7038d9'],w:1100,h:760,f:fVoice},
  term:{t:'终端',i:'⌨️',c:['#2b2f3a','#12141b'],w:560,h:340,f:fTerm},
  notes:{t:'便签',i:'📝',c:['#ffe995','#ffac53'],w:420,h:360,f:fNotes},
  files:{t:'文件',i:'📁',c:['#3ec6ff','#2a7bff'],w:440,h:320,f:fFiles},
