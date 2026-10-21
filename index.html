@@ -169,6 +169,16 @@ body{background:#080a16}
 .win.game-active .game-framebox{display:flex;align-items:stretch;justify-content:stretch}
 .win.game-active iframe.game-frame{flex:1 1 100%;width:100%!important;min-width:100%;max-width:100%;height:100%!important;min-height:0;border:0;display:block;align-self:stretch}
 .win.game-active .game-playerbar{width:100%;max-width:100%}
+/* Adaptive game viewport: follow the actual window width/height in real time */
+.win.game-active{display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden}
+.win.game-active .wb{flex:1 1 auto;display:flex;flex-direction:column;width:100%;height:calc(100% - 42px);min-width:0;min-height:0;overflow:hidden}
+.win.game-active .games-app{flex:1 1 auto;width:100%;height:100%;min-width:0;min-height:0;display:flex;flex-direction:column;overflow:hidden;box-sizing:border-box}
+.win.game-active .games-head{flex:0 0 auto}
+.win.game-active .game-player{flex:1 1 0;display:flex;flex-direction:column;width:100%;height:100%;min-width:0;min-height:0;overflow:hidden}
+.win.game-active .game-playerbar{flex:0 0 auto;display:flex;flex-wrap:wrap;align-items:center;max-width:100%;min-width:0}
+.win.game-active .game-framebox{position:relative;display:flex;flex:1 1 0;width:100%;height:auto;min-width:0;min-height:0;max-width:100%;max-height:none;overflow:hidden}
+.win.game-active iframe.game-frame{position:absolute;inset:0;display:block;flex:none;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;border:0}
+.win.game-active .game-error-note{flex:0 0 auto;max-width:100%;min-width:0}
 /* ---------- Game window sizing and safer window controls ---------- */
 .tb{height:42px;gap:10px;padding:0 14px}
 .tb i{width:17px;height:17px;min-width:17px;min-height:17px;position:relative;box-shadow:0 0 0 5px transparent}
