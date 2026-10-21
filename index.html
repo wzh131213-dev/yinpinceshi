@@ -326,11 +326,10 @@ html,body{touch-action:pan-x pan-y!important;overscroll-behavior:none!important}
  min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;resize:none!important;animation:none!important;transform:none!important;border-radius:10px!important
 }
 
-/* iPad keyboard gap fix: continue the desktop wallpaper behind the reserved strip above the native keyboard. */
+/* Keep the wallpaper at the pre-keyboard visual viewport height to prevent horizontal cutoff bands. */
 body.voice-keyboard-open #scr{
- position:fixed!important;
- top:0!important;left:0!important;right:0!important;bottom:-180px!important;
- height:auto!important;min-height:calc(100% + 180px)!important;
+ position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:auto!important;
+ height:var(--na-keyboard-bg-height,100%)!important;min-height:0!important;
  background-color:#080a16!important;
 }
 body.voice-keyboard-open{background-color:#080a16!important}
@@ -433,6 +432,12 @@ function syncVoiceKeyboardLayout(){
  /* Detect the iPad keyboard from viewport shrinkage globally; iframe focus may not make W.voice active. */
  const keyboardOpen=keyboardOverlap>Math.max(100,voiceViewportMaxHeight*.12);
  document.body.classList.toggle('voice-keyboard-open',keyboardOpen);
+ /* Preserve the actual pre-keyboard viewport height instead of guessing a fixed extension. */
+ if(keyboardOpen){
+  document.documentElement.style.setProperty('--na-keyboard-bg-height',Math.ceil(voiceViewportMaxHeight)+'px');
+ }else{
+  document.documentElement.style.removeProperty('--na-keyboard-bg-height');
+ }
  /* Requested iPad behavior: hide the desktop taskbar while the native keyboard is visible. */
  const taskbar=document.getElementById('mb');
  const dock=document.getElementById('dk');
