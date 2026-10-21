@@ -291,6 +291,9 @@ body{background:#080a16}
 .win.game-active{font-size:initial!important}
 .win.game-active>.tb{font-size:initial!important}
 
+/* Hide taskbar and app dock on boot, shutdown, and lock screens */
+body.system-screen #mb,
+body.system-screen #dk{display:none!important;visibility:hidden!important;pointer-events:none!important}
 /* FINAL FORCE OVERRIDE: bottom taskbar + no page zoom */
 html,body{touch-action:pan-x pan-y!important;overscroll-behavior:none!important}
 #mb{position:fixed!important;top:auto!important;bottom:0!important;left:0!important;right:0!important;width:auto!important;height:58px!important;min-height:58px!important;border-radius:0!important;z-index:2147483000!important}
@@ -343,14 +346,19 @@ function setWP(i,u){st.wp=i;SC.style.cssText=u?`background-image:url(${u});backg
 function setLG(v){st.lg=v;document.body.classList.toggle('lg',v);document.querySelectorAll('.sw').forEach(e=>e.classList.toggle('on',v));$('#lgb').textContent='💧 玻璃：'+(v?'开':'关');save()}
 function setBR(v){st.br=v;$('#dm').style.opacity=(100-v)/125;save()}
 function setUIScale(v){st.uiScale=Math.max(40,Math.min(160,Number(v)||100));document.documentElement.style.setProperty('--ui-scale',String(st.uiScale/100));const out=$('#uiScaleValue');if(out)out.textContent=st.uiScale+'%';save()}
+function syncSystemScreen(){
+ const state=P.dataset.s;
+ document.body.classList.toggle('system-screen',state==='boot'||state==='off'||state==='lock');
+}
 function power(s){
  if(s=='off'){Object.values(W).forEach(w=>w.remove());W={};dock()}
  P.dataset.s=s;
+ syncSystemScreen();
  if(s=='boot')setTimeout(()=>P.dataset.s=='boot'&&power('lock'),2600)
 }
 const restart=()=>{power('off');setTimeout(()=>power('boot'),1100)};
-P.onclick=()=>{if(P.dataset.s=='lock')P.dataset.s=''};
-addEventListener('keydown',()=>{if(P.dataset.s=='lock')P.dataset.s=''});
+P.onclick=()=>{if(P.dataset.s=='lock')power('')};
+addEventListener('keydown',()=>{if(P.dataset.s=='lock')power('')});
 $('#pb').onclick=()=>power('boot');
 function pop(x,y,items){
  $('.pm')?.remove();
