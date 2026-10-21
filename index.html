@@ -165,6 +165,26 @@ body{background:#080a16}
  .games-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
  
+/* ---------- Game window sizing and safer window controls ---------- */
+.tb{height:42px;gap:10px;padding:0 14px}
+.tb i{width:17px;height:17px;min-width:17px;min-height:17px;position:relative;box-shadow:0 0 0 5px transparent}
+.tb i::after{content:"";position:absolute;inset:-5px;border-radius:50%}
+.tb i:active{filter:brightness(1.2);transform:scale(.96)}
+.win.game-active .wb{display:flex;flex-direction:column;overflow:hidden}
+.win.game-active .games-app{display:flex;flex:1;flex-direction:column;height:100%;min-height:0;overflow:hidden;padding:10px}
+.win.game-active .games-head,.win.game-active .games-note:not(.game-error-note){flex:none}
+.win.game-active .game-player{display:flex;flex:1;min-height:0;height:100%;overflow:hidden}
+.win.game-active .game-playerbar{flex:none}
+.win.game-active .game-framebox{display:block;flex:1;width:100%;height:100%;min-height:0;max-height:none}
+.win.game-active .game-frame{display:block;width:100%;height:100%;min-height:0}
+.win.game-active .game-error-note{flex:none;max-height:48px;overflow:auto}
+@media(max-width:700px){
+ .tb{height:46px;gap:12px;padding:0 13px}
+ .tb i{width:19px;height:19px;min-width:19px;min-height:19px}
+ .tb i::after{inset:-6px}
+ .win.game-active.mx{inset:44px 5px 70px 5px!important}
+}
+ 
 /* ---------- Game launcher cards ---------- */
 .games-app{padding:16px;background:linear-gradient(145deg,rgba(15,22,44,.96),rgba(26,19,48,.92));color:#f8fafc;min-height:100%;font-family:inherit}
 .games-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
@@ -375,12 +395,12 @@ function fGames(b){
  const root=b.querySelector('.games-app'),grid=root.querySelector('.games-grid'),player=root.querySelector('.game-player'),frame=root.querySelector('.game-frame'),title=root.querySelector('.game-current'),loading=root.querySelector('.game-loading');
  root.querySelectorAll('[data-game]').forEach(btn=>btn.onclick=()=>{
   const g=games[Number(btn.dataset.game)];if(!g)return;
-  grid.hidden=true;root.querySelector('.games-note').hidden=true;player.hidden=false;title.textContent=g.emoji+' '+g.name;loading.style.display='grid';root.querySelector('.game-open').hidden=false;root.querySelector('.game-open').onclick=()=>window.open(g.url,'_blank','noopener');frame.src='about:blank';
+  grid.hidden=true;root.querySelector('.games-note').hidden=true;player.hidden=false;const hostWin=root.closest('.win');if(hostWin)hostWin.classList.add('game-active');title.textContent=g.emoji+' '+g.name;loading.style.display='grid';root.querySelector('.game-open').hidden=false;root.querySelector('.game-open').onclick=()=>window.open(g.url,'_blank','noopener');frame.src='about:blank';
   loading.textContent='正在加载游戏…';
   setTimeout(()=>{frame.src=g.url},30);
   setTimeout(()=>{if(!player.hidden&&loading.style.display!=='none'){loading.textContent='加载时间较长，游戏站点可能不支持内嵌。可点击上方“在新标签页打开游戏”继续。';root.querySelector('.game-open').hidden=false;}},10000);
  });
- root.querySelector('.game-back').onclick=()=>{frame.src='about:blank';player.hidden=true;grid.hidden=false;root.querySelector('.games-note').hidden=false};
+ root.querySelector('.game-back').onclick=()=>{frame.src='about:blank';player.hidden=true;grid.hidden=false;const hostWin=root.closest('.win');if(hostWin)hostWin.classList.remove('game-active');root.querySelector('.games-note').hidden=false};
  root.querySelector('.game-reload').onclick=()=>{loading.style.display='grid';loading.textContent='正在重新加载游戏…';const u=frame.src;frame.src='about:blank';setTimeout(()=>frame.src=u,30);setTimeout(()=>{if(!player.hidden&&loading.style.display!=='none'){loading.textContent='加载时间较长，游戏站点可能不支持内嵌。可点击上方“在新标签页打开游戏”继续。';root.querySelector('.game-open').hidden=false;}},10000)};
  frame.addEventListener('load',()=>{if(frame.src!=='about:blank')loading.style.display='none'});
  root.querySelector('.game-full').onclick=()=>{const box=root.querySelector('.game-framebox');if(box.requestFullscreen)box.requestFullscreen();else if(frame.requestFullscreen)frame.requestFullscreen()};
