@@ -421,7 +421,8 @@ function syncVoiceKeyboardLayout(){
  const voiceWindow=W.voice;
  const activeVoice=!!(voiceWindow&&voiceWindow.isConnected&&voiceWindow.classList.contains('f')&&voiceWindow.style.display!=='none');
  const keyboardOverlap=Math.max(0,voiceViewportMaxHeight-visibleHeight);
- const keyboardOpen=activeVoice&&keyboardOverlap>Math.max(140,voiceViewportMaxHeight*.18);
+ /* Detect the iPad keyboard from viewport shrinkage globally; iframe focus may not make W.voice active. */
+ const keyboardOpen=keyboardOverlap>Math.max(100,voiceViewportMaxHeight*.12);
  document.body.classList.toggle('voice-keyboard-open',keyboardOpen);
  /* Requested iPad behavior: hide the desktop taskbar while the native keyboard is visible. */
  const taskbar=document.getElementById('mb');
@@ -431,7 +432,7 @@ function syncVoiceKeyboardLayout(){
  document.documentElement.style.setProperty('--taskbar-keyboard-shift','0px');
  document.documentElement.style.setProperty('--dock-keyboard-shift','0px');
  if(!voiceWindow)return;
- if(keyboardOpen){
+ if(keyboardOpen&&activeVoice){
   const leftOffset=vv?vv.offsetLeft:0;
   const topOffset=vv?vv.offsetTop:0;
   const visibleWidth=vv?vv.width:window.innerWidth;
