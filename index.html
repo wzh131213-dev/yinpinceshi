@@ -312,6 +312,19 @@ html,body{touch-action:pan-x pan-y!important;overscroll-behavior:none!important}
 #desktopApps .desk-icon{position:absolute!important;left:0;top:0;margin:0;pointer-events:auto!important;touch-action:none!important;user-select:none!important;-webkit-user-select:none!important;}
 #desktopApps .desk-icon.dragging{z-index:20!important;cursor:grabbing!important;background:rgba(255,255,255,.2)!important;border-color:rgba(255,255,255,.35)!important;transition:none!important;}
 @media(max-width:700px){#desktopApps{inset:0!important}#desktopApps .desk-icon{width:65px!important;min-height:68px!important}}
+
+/* iPad/iOS virtual keyboard: fit desktop to the actually visible viewport */
+html,body{min-height:0}
+body{--nangai-vv-height:100dvh;--nangai-vv-top:0px}
+.win{box-sizing:border-box;max-height:calc(var(--nangai-vv-height) - 76px)}
+.win>.wb{min-height:0;min-width:0;flex:1 1 auto;overflow:auto;overscroll-behavior:contain}
+.win>.tb{flex:0 0 auto}
+body.keyboard-open #mb,body.keyboard-open #dk{display:none!important;visibility:hidden!important;pointer-events:none!important}
+body.keyboard-open .win{max-height:calc(var(--nangai-vv-height) - 12px)!important}
+body.keyboard-open .win>.wb{min-height:0;overflow:auto}
+body.keyboard-open .win.mx{top:var(--nangai-vv-top)!important;left:0!important;width:100vw!important;height:calc(var(--nangai-vv-height) - 4px)!important;max-height:calc(var(--nangai-vv-height) - 4px)!important;border-radius:8px}
+@supports(height:100dvh){body:not(.keyboard-open) .win{max-height:calc(100dvh - 76px)}}
+
 </style></head><body class="lg">
 <svg width="0" height="0" style="position:absolute"><filter id="lq" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".012 .018" numOctaves="2" seed="7" result="n"/><feGaussianBlur in="n" stdDeviation="3" result="b"/><feDisplacementMap in="SourceGraphic" in2="b" scale="55" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <div id="scr"></div>
@@ -586,6 +599,39 @@ if(deskApps){
  deskApps.addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(!b)return;document.querySelectorAll('.desk-icon').forEach(x=>x.classList.toggle('selected',x===b));if(matchMedia('(pointer: coarse)').matches)launch(b.dataset.app)});
  deskApps.addEventListener('dblclick',e=>{const b=e.target.closest('[data-app]');if(b)launch(b.dataset.app)});
 }
+
+
+/* iOS visualViewport + soft-keyboard layout synchronization */
+(function(){
+ const vv=window.visualViewport;let keyboardOpen=false;const saved=new WeakMap();
+ function syncViewport(){
+  const height=vv?vv.height:window.innerHeight,top=vv?vv.offsetTop:0;
+  document.documentElement.style.setProperty('--nangai-vv-height',Math.max(180,height)+'px');
+  document.documentElement.style.setProperty('--nangai-vv-top',Math.max(0,top)+'px');
+  const active=document.activeElement;
+  const isTextEntry=!!active&&(/^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName)||active.isContentEditable);
+  const visible=!!vv&&window.innerHeight-height>145&&isTextEntry;
+  if(visible!==keyboardOpen){keyboardOpen=visible;document.body.classList.toggle('keyboard-open',keyboardOpen)}
+  document.querySelectorAll('.win').forEach(w=>{
+   if(keyboardOpen){
+    if(!saved.has(w))saved.set(w,{top:w.style.top,left:w.style.left,height:w.style.height,width:w.style.width});
+    const r=w.getBoundingClientRect();
+    if(r.bottom>top+height-8)w.style.top=Math.max(top,top+height-r.height-8)+'px';
+    if(r.top<top)w.style.top=top+'px';
+    w.style.maxHeight=Math.max(160,height-12)+'px';
+   }else{
+    const old=saved.get(w);
+    if(old){w.style.top=old.top;w.style.left=old.left;w.style.height=old.height;w.style.width=old.width;w.style.maxHeight='';saved.delete(w)}
+   }
+  });
+  if(keyboardOpen&&active)requestAnimationFrame(()=>{try{active.scrollIntoView({block:'nearest',inline:'nearest',behavior:'auto'})}catch(e){}});
+ }
+ if(vv){vv.addEventListener('resize',syncViewport);vv.addEventListener('scroll',syncViewport)}
+ window.addEventListener('resize',syncViewport);
+ document.addEventListener('focusin',e=>{if(e.target.matches('input,textarea,select,[contenteditable="true"]'))setTimeout(syncViewport,80)});
+ document.addEventListener('focusout',()=>setTimeout(syncViewport,220));
+ syncViewport();
+})();
 
 setWP(st.wp);setLG(st.lg);setBR(st.br);document.documentElement.style.setProperty('--ui-scale',String((st.uiScale||100)/100));power('boot');
 </script></body></html>
