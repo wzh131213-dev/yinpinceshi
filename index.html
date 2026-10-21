@@ -351,7 +351,7 @@ body.system-screen #mb,body.system-screen #dk{display:none!important;visibility:
 <div id="mb" class="g" role="toolbar" aria-label="Windows 风格任务栏"><button id="lo" title="开始" aria-label="打开开始菜单"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3.5 10.5 2v8H2zm10.5-1.7L22 0v10h-9.5zM2 12h8.5v8L2 18.5zm10.5 0H22v10l-9.5-1.7z" fill="currentColor"/></svg></button><span class="sp"></span><div id="tray" aria-label="系统托盘"><button id="trayMore" title="隐藏的图标">⌃</button><span id="sysmark" title="网络连接：已连接">◉</span><span class="tray-volume" title="音量">◖))</span><span class="tray-battery" title="电池">▰</span><button id="lgb" title="切换液态玻璃效果" aria-label="切换液态玻璃效果">⚙</button><span id="cl" aria-label="日期和时间"></span></div><b id="brandName" hidden>NangaiOS</b><b id="an" hidden>桌面</b></div>
 <div id="dk" class="g" aria-label="应用程序 Dock"></div>
 <div id="dm"></div>
-<div id="pw" data-s="boot"><div class="lo1">◉</div><div class="pr"><i></i></div><div class="lk"><h1 id="ck"></h1><p id="dt"></p><span>点按任意处解锁</span></div><button id="pb">⏻</button></div>
+<div id="pw" data-s=""><div class="lo1">◉</div><div class="pr"><i></i></div><div class="lk"><h1 id="ck"></h1><p id="dt"></p><span>点按任意处解锁</span></div><button id="pb">⏻</button></div>
 <script>
 const $=(s,e=document)=>e.querySelector(s),H=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -636,7 +636,7 @@ if(deskApps){
  syncViewport();
 })();
 
-setWP(st.wp);setLG(st.lg);setBR(st.br);document.documentElement.style.setProperty('--ui-scale',String((st.uiScale||100)/100));power('boot');
+setWP(st.wp);setLG(st.lg);setBR(st.br);document.documentElement.style.setProperty('--ui-scale',String((st.uiScale||100)/100));power('');
 </script>
 <script>
 (function(){function recover(){var p=document.getElementById('pw');if(!p)return;if(p.dataset.s==='boot'){p.dataset.s='';document.body.classList.remove('system-screen','keyboard-open');var mb=document.getElementById('mb'),dk=document.getElementById('dk');[mb,dk].forEach(function(el){if(el){['display','visibility','opacity','pointer-events'].forEach(function(k){el.style.removeProperty(k)})}})}}window.addEventListener('load',function(){setTimeout(recover,4200)});document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(recover,1800)})})();
