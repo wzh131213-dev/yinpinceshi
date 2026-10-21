@@ -227,7 +227,7 @@ const fmt=t=>esc(t).replace(/```\w*\n([\s\S]*?)(```|$)/g,(_,c)=>`<pre>${c}</pre>
 const S=(k,v)=>{try{return v===undefined?JSON.parse(localStorage.getItem(k)):localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 const st={wp:0,lg:true,br:100,uiScale:75,...S('os')};
 const save=()=>S('os',{wp:Math.max(st.wp,0),lg:st.lg,br:st.br,uiScale:st.uiScale});
-function setUIScale(v){st.uiScale=Math.max(40,Math.min(100,Number(v)||75));document.documentElement.style.zoom=(st.uiScale/100);const out=$('#uiScaleValue');if(out)out.textContent=st.uiScale+'%';save()}
+function setUIScale(v){st.uiScale=Math.max(40,Math.min(100,Number(v)||75));document.body.style.zoom=(st.uiScale/100);const out=$('#uiScaleValue');if(out)out.textContent=st.uiScale+'%';save()}
 const FS=S('fs')||{'hello.js':'console.log("你好，NangaiOS 👋")','index.html':'<body style="margin:0;display:grid;place-items:center;height:100vh;background:linear-gradient(135deg,#ff6bd6,#4d7cff);color:#fff;font:700 32px sans-serif">NangaiOS ✨</body>','笔记.txt':'欢迎使用 NangaiOS。这里是你的浏览器桌面。'};
 const WP=[
 'radial-gradient(50% 45% at 18% 22%,#ff6bd6cc,transparent),radial-gradient(45% 50% at 82% 18%,#4d7cffcc,transparent),radial-gradient(55% 55% at 65% 88%,#ffb25bcc,transparent),radial-gradient(40% 40% at 30% 80%,#2ee6c5aa,transparent),linear-gradient(135deg,#1a1038,#2a1560)',
