@@ -29,10 +29,15 @@ jobs:
         uses: actions/checkout@v4
       - name: Configure Pages
         uses: actions/configure-pages@v5
+      - name: Prepare static-only site
+        run: |
+          mkdir -p public
+          cp index.html public/index.html
+          cp .nojekyll public/.nojekyll
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: public
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
