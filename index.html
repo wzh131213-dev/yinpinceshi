@@ -186,6 +186,7 @@ body{background:#080a16}
 /* ---------- Layout width guard: prevent app/window horizontal overflow ---------- */
 .win{max-width:calc(100vw - 16px);min-width:min(260px,calc(100vw - 12px))}
 .win.mx{left:8px!important;right:8px!important;min-width:0!important;max-width:none!important;resize:none}
+ .voice-keyboard-open #mb,.voice-keyboard-open #dk{display:none!important}
 .wb{width:100%;max-width:100%;min-width:0}
 .games-app{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
 .games-head,.games-grid,.game-player,.game-playerbar,.game-framebox{min-width:0;max-width:100%}
@@ -398,23 +399,33 @@ function dock(){
  document.querySelectorAll('#dk button').forEach(b=>b.classList.toggle('on',b.dataset.id in W))
 }
 function foc(w){document.querySelectorAll('.win').forEach(x=>x.classList.remove('f'));w.classList.add('f');w.style.zIndex=++z;dock()}
+function syncVoiceKeyboardLayout(){
+ const available=screen.availHeight||innerHeight;
+ const keyboardOpen=innerHeight<available*.58&&W.voice&&W.voice.classList.contains('f')&&W.voice.style.display!=='none';
+ document.body.classList.toggle('voice-keyboard-open',!!keyboardOpen);
+}
+addEventListener('resize',syncVoiceKeyboardLayout,{passive:true});
+if(window.visualViewport)window.visualViewport.addEventListener('resize',syncVoiceKeyboardLayout,{passive:true});
+
 function launch(id,arg){
  let w=W[id];
  if(!w){
   const a=A[id],n=Object.keys(W).length;
   w=W[id]=H('div','win g');
-  w.style.cssText=`left:${Math.min(80+n*34,Math.max(8,innerWidth-320))}px;top:${Math.min(52+n*28,Math.max(50,innerHeight-240))}px;width:${Math.min(a.w,innerWidth-16)}px;height:${Math.min(a.h,innerHeight-130)}px`;
+  const availableHeight=screen.availHeight||innerHeight;
+  const sizingHeight=id==='voice'&&innerHeight<availableHeight*.58?availableHeight:innerHeight;
+  w.style.cssText=`left:${Math.min(80+n*34,Math.max(8,innerWidth-320))}px;top:${Math.min(52+n*28,Math.max(50,sizingHeight-240))}px;width:${Math.min(a.w,innerWidth-16)}px;height:${Math.min(a.h,Math.max(240,sizingHeight-130))}px`;
   w.innerHTML=`<div class=tb><i style="background:#ff5f57" title="关闭" aria-label="关闭窗口"></i><i style="background:#febc2e" title="最小化" aria-label="最小化窗口"></i><i style="background:#28c840" title="最大化/还原" aria-label="最大化或还原窗口"></i><b>${a.i} ${a.t}</b></div><div class=wb></div>`;
   const [x,m,M]=w.querySelectorAll('i'),tb=$('.tb',w);
-  x.onclick=()=>{w.remove();delete W[id];dock()};
-  m.onclick=()=>{w.style.display='none';w.classList.remove('f');dock()};
+  x.onclick=()=>{w.remove();delete W[id];dock();syncVoiceKeyboardLayout()};
+  m.onclick=()=>{w.style.display='none';w.classList.remove('f');dock();syncVoiceKeyboardLayout()};
   M.onclick=()=>w.classList.toggle('mx');
   tb.ondblclick=e=>{if(e.target.tagName!='I')w.classList.toggle('mx')};
   tb.onpointerdown=e=>{if(e.target.tagName=='I'||w.classList.contains('mx'))return;const dx=e.clientX-w.offsetLeft,dy=e.clientY-w.offsetTop;tb.setPointerCapture(e.pointerId);tb.onpointermove=v=>{w.style.left=v.clientX-dx+'px';w.style.top=Math.max(44,v.clientY-dy)+'px'};tb.onpointerup=()=>{tb.onpointermove=null}};
   w.onpointerdown=()=>foc(w);
   document.body.append(w);a.f($('.wb',w),w)
  }
- w.style.display='';if(id==='games')w.classList.add('mx');foc(w);if(arg&&w.ld)w.ld(arg)
+ w.style.display='';if(id==='games')w.classList.add('mx');foc(w);syncVoiceKeyboardLayout();if(arg&&w.ld)w.ld(arg)
 }
 
 /* ---------- 应用 ---------- */
