@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8"><title>NangaiOS · 网页电脑操作系统</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101225"><meta name="description" content="NangaiOS：运行在浏览器中的液态玻璃桌面操作系统">
+<style>
+*{box-sizing:border-box;margin:0;font:13px/1.45 -apple-system,"SF Pro Text","PingFang SC","Microsoft YaHei",sans-serif}
+html,body{height:100%;overflow:hidden;background:#000;color:#fff;-webkit-user-select:none;user-select:none}
+input,textarea,.m,.tm,iframe{-webkit-user-select:text;user-select:text}
+:root{--bf:blur(18px) saturate(1.8) brightness(1.1)}
+#scr{position:fixed;inset:0;background-size:150% 150%;animation:mv 30s ease-in-out infinite alternate}
+@keyframes mv{to{background-position:100% 100%}}
+@media(prefers-reduced-motion){#scr{animation:none}}
+.g{background:rgba(30,32,44,.92);border:1px solid rgba(255,255,255,.14);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+body.lg .g{background:rgba(60,70,110,.2);-webkit-backdrop-filter:var(--bf);backdrop-filter:var(--bf);border-color:rgba(255,255,255,.3);box-shadow:inset 2px 2px 1px -1px rgba(255,255,255,.75),inset -1px -1px 1px rgba(255,255,255,.3),inset 0 0 26px rgba(255,255,255,.1),0 14px 44px rgba(0,0,0,.3)}
+#mb{position:fixed;top:6px;left:8px;right:8px;height:30px;border-radius:15px;display:flex;align-items:center;gap:10px;padding:0 10px;z-index:5000;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+#mb .sp{flex:1}
+#mb button{background:none;border:0;color:inherit;cursor:pointer;padding:2px 9px;border-radius:9px;text-shadow:inherit}
+#mb button:hover{background:rgba(255,255,255,.2)}
+#dk{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:10px;padding:8px 12px;border-radius:26px;z-index:5000}
+#dk button{position:relative;width:52px;height:52px;border:0;border-radius:14px;font-size:27px;background:linear-gradient(145deg,var(--a),var(--b));cursor:pointer;transition:transform .22s cubic-bezier(.3,1.6,.5,1);box-shadow:inset 0 1px 1px rgba(255,255,255,.6),0 4px 10px rgba(0,0,0,.3)}
+#dk button:hover{transform:translateY(-10px) scale(1.25)}
+#dk u{position:absolute;bottom:-6px;left:50%;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:#fff;display:none}
+#dk .on u{display:block}
+.win{position:fixed;border-radius:14px;overflow:hidden;resize:both;display:flex;flex-direction:column;min-width:260px;min-height:170px;animation:pop .25s cubic-bezier(.3,1.4,.5,1)}
+@keyframes pop{from{transform:scale(.88);opacity:0}}
+.win.mx{inset:44px 8px 84px 8px!important;width:auto!important;height:auto!important}
+.tb{height:34px;flex:none;display:flex;align-items:center;gap:8px;padding:0 12px;cursor:grab;touch-action:none}
+.tb i{width:12px;height:12px;border-radius:50%;cursor:pointer;flex:none}
+.tb b{flex:1;text-align:center;font-weight:600;margin-right:44px}
+.win:not(.f) .tb{opacity:.6}
+.wb{flex:1;min-height:0;overflow:auto;background:rgba(14,16,24,.55)}
+.col{display:flex;flex-direction:column;height:100%}
+.bar{display:flex;gap:8px;padding:8px;align-items:center;flex:none}
+.bt,.in{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:8px;padding:4px 10px;outline:0}
+.bt{cursor:pointer}.bt:hover{background:rgba(255,255,255,.3)}
+select option{color:#000}
+.sp{flex:1;display:flex;min-height:0}
+textarea{flex:1;min-width:0;resize:none;border:0;outline:0;background:rgba(0,0,0,.3);color:#d6e4ff;font:13px/1.6 ui-monospace,Menlo,Consolas,monospace;padding:10px;tab-size:2;white-space:pre}
+iframe{flex:1;min-width:0;border:0;background:#0d1117;border-left:1px solid rgba(255,255,255,.15)}
+.ch{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.m{max-width:88%;padding:8px 12px;border-radius:14px;white-space:pre-wrap;word-break:break-word}
+.m.u{align-self:flex-end;background:rgba(80,140,255,.75)}.m.a{align-self:flex-start;background:rgba(255,255,255,.16)}
+.m pre{background:rgba(0,0,0,.45);padding:8px;border-radius:8px;overflow:auto;font:12px ui-monospace,Menlo,monospace;margin:6px 0}
+.tm{padding:10px;font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;color:#9fffc0;cursor:text}
+.tm *{font:inherit}.tm div{white-space:pre-wrap}
+.tm input{background:none;border:0;outline:0;color:#fff;width:100%}
+.fi{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.08);cursor:default}
+.fi:hover{background:rgba(255,255,255,.12)}.fi small{margin-left:auto;opacity:.6}
+.st{padding:14px}.st h4{margin-bottom:8px}
+.wg{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.wg i,.up{width:96px;height:60px;border-radius:10px;background-size:cover;cursor:pointer;border:2px solid rgba(255,255,255,.3)}
+.wg i:hover{border-color:#fff}
+.up{display:grid;place-items:center;font-size:22px;background:rgba(255,255,255,.12)}
+.row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;margin-bottom:8px;border-radius:12px;background:rgba(255,255,255,.1)}
+.row small{opacity:.7}
+.sw{width:46px;height:28px;border-radius:14px;background:rgba(255,255,255,.28);position:relative;cursor:pointer;transition:.25s}
+.sw:after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.25s cubic-bezier(.3,1.5,.5,1);box-shadow:0 2px 5px rgba(0,0,0,.3)}
+.sw.on{background:#34c759}.sw.on:after{left:21px}
+.pm{position:fixed;z-index:8000;min-width:170px;padding:6px;border-radius:14px}
+.mi{padding:6px 12px;border-radius:8px;cursor:default}.mi:hover{background:rgba(255,255,255,.22)}
+#dm{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:9500}
+#pw{position:fixed;inset:0;z-index:9000;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;transition:opacity .7s}
+#pw>*{display:none}
+#pw[data-s=boot] .lo1,#pw[data-s=boot] .pr{display:block}
+#pw[data-s=off] #pb{display:grid}
+#pw[data-s=lock] .lk{display:block;text-align:center;text-shadow:0 2px 16px rgba(0,0,0,.4)}
+#pw[data-s=lock]{background:rgba(0,0,0,.25);-webkit-backdrop-filter:blur(28px);backdrop-filter:blur(28px)}
+#pw[data-s=""]{opacity:0;pointer-events:none;background:transparent}
+.lo1{font-size:64px}
+.pr{width:180px;height:5px;border-radius:3px;background:rgba(255,255,255,.2);overflow:hidden}
+.pr i{display:block;height:100%;width:0;background:#fff}
+#pw[data-s=boot] .pr i{animation:ld 2.4s cubic-bezier(.5,0,.3,1) forwards}
+@keyframes ld{to{width:100%}}
+#pb{width:64px;height:64px;border-radius:50%;border:2px solid rgba(255,255,255,.5);background:none;color:#fff;font-size:28px;cursor:pointer;place-items:center}
+#ck{font-size:96px;font-weight:200;letter-spacing:-2px}
+
+/* ---------- NangaiOS desktop shell ---------- */
+:root{--na-accent:#a9a5ff;--na-panel:rgba(18,21,39,.58)}
+body{background:#080a16}
+#scr{background-position:center;filter:saturate(1.04)}
+#mb{height:36px;top:8px;left:12px;right:12px;padding:0 12px;gap:9px;border-radius:13px;background:rgba(13,16,32,.48);border-color:rgba(255,255,255,.22);backdrop-filter:blur(26px) saturate(1.65);-webkit-backdrop-filter:blur(26px) saturate(1.65)}
+#mb #lo{width:25px;height:25px;padding:0;border-radius:8px;font-size:15px;font-weight:800;color:#fff;background:linear-gradient(140deg,#a99cff,#55d8ff);box-shadow:0 2px 9px #5d63ff55;text-shadow:none}
+#brandName{font-size:12px;font-weight:750;letter-spacing:.15px;white-space:nowrap}
+#mb .sep{height:17px;width:1px;background:rgba(255,255,255,.2);margin:0 2px}
+#mb #an{font-size:12px;font-weight:550;opacity:.86}
+#mb #lgb{white-space:nowrap;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);border-radius:8px}
+#mb #sysmark{opacity:.76;white-space:nowrap}
+#cl{white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:600;font-size:12px}
+#desktop{position:fixed;inset:50px 0 82px;z-index:1;pointer-events:none;color:#fff;text-shadow:0 1px 5px #0008}
+.brand-stamp{position:absolute;left:25px;top:13px;display:flex;align-items:center;gap:10px;pointer-events:none}
+.brand-stamp .mark{display:grid;place-items:center;width:35px;height:35px;border-radius:12px;background:linear-gradient(140deg,#a99cff,#4ed8f4);box-shadow:0 7px 24px #6768ff45;font-size:18px;font-weight:850;color:#fff;text-shadow:none}
+.brand-stamp strong{display:block;font-size:13px;letter-spacing:.1px}
+.brand-stamp small{display:block;margin-top:2px;font-size:9px;letter-spacing:1.4px;opacity:.68}
+#desktopApps{position:absolute;left:18px;top:69px;display:grid;grid-template-columns:repeat(1,84px);gap:8px;pointer-events:auto}
+.desk-icon{width:80px;min-height:78px;border:1px solid transparent;border-radius:13px;padding:7px 4px 6px;background:transparent;color:#fff;display:flex;align-items:center;flex-direction:column;gap:5px;cursor:pointer;text-shadow:0 2px 5px #000a;transition:background .15s,border-color .15s;touch-action:manipulation}
+.desk-icon:hover,.desk-icon.selected{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.22)}
+.desk-icon .di{display:grid;place-items:center;width:43px;height:43px;border-radius:13px;font-size:23px;box-shadow:inset 0 1px 1px #ffffff80,0 6px 14px #0004;border:1px solid #ffffff25;text-shadow:none}
+.desk-icon .label{font-size:11px;line-height:1.2;text-align:center;max-width:76px;overflow-wrap:anywhere}
+.di.files{background:linear-gradient(145deg,#6edcff,#2879fa)}.di.code{background:linear-gradient(145deg,#58bbff,#6557ee)}.di.term{background:linear-gradient(145deg,#384155,#101522)}.di.ai{background:linear-gradient(145deg,#ff9fe7,#8d68ff)}.di.set{background:linear-gradient(145deg,#cad4e7,#67738d)}.di.notes{background:linear-gradient(145deg,#ffe995,#ffac53)}
+#deskWidget{position:absolute;right:26px;top:16px;width:244px;padding:17px 18px 15px;border-radius:20px;background:rgba(20,23,43,.32);border:1px solid rgba(255,255,255,.24);box-shadow:inset 1px 1px 0 #ffffff26,0 14px 40px #0002;backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);text-shadow:none;pointer-events:none}
+#deskWidget .dw-eyebrow{font-size:10px;letter-spacing:1px;text-transform:uppercase;opacity:.72}
+#heroTime{font-size:39px;font-weight:250;letter-spacing:-1.5px;line-height:1.2;margin:7px 0 2px;font-variant-numeric:tabular-nums}
+#heroDate{font-size:12px;opacity:.9}
+#deskWidget .dw-line{height:1px;background:rgba(255,255,255,.18);margin:13px 0 11px}
+#deskWidget .dw-status{display:flex;gap:7px;align-items:center;font-size:11px;opacity:.9}
+#deskWidget .status-dot{width:6px;height:6px;border-radius:50%;background:#67e8a5;box-shadow:0 0 9px #67e8a5}
+#deskWidget .dw-foot{margin-top:7px;font-size:10px;opacity:.58}
+.win{border:1px solid rgba(255,255,255,.25);border-radius:15px;box-shadow:0 24px 70px #0006,inset 0 1px 0 #ffffff25;backdrop-filter:blur(24px) saturate(1.25);-webkit-backdrop-filter:blur(24px) saturate(1.25)}
+.tb{height:40px;background:rgba(255,255,255,.055);border-bottom:1px solid rgba(255,255,255,.1);cursor:grab}
+.tb:active{cursor:grabbing}
+.tb i{width:12px;height:12px;box-shadow:inset 0 0 0 1px #0002}
+.tb b{font-size:12px;letter-spacing:.1px}
+.wb{background:rgba(11,14,25,.7)}
+#dk{gap:9px;padding:9px 12px 10px;border-radius:20px;max-width:calc(100vw - 18px);overflow:visible;background:rgba(16,19,36,.4);backdrop-filter:blur(28px) saturate(1.8);-webkit-backdrop-filter:blur(28px) saturate(1.8);border-color:rgba(255,255,255,.28);box-shadow:inset 0 1px 0 #ffffff35,0 16px 50px #0003}
+#dk button{width:50px;height:50px;border-radius:14px;flex:none}
+#dk button:focus-visible,.desk-icon:focus-visible,#mb button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+#dk u{bottom:-5px}
+.pm{background:rgba(20,23,40,.82)!important;backdrop-filter:blur(25px) saturate(1.7);-webkit-backdrop-filter:blur(25px) saturate(1.7);border-color:rgba(255,255,255,.22);box-shadow:0 16px 45px #0006}
+.mi{padding:8px 12px;font-size:12px}
+#pw .lo1{font-size:48px;font-weight:850;letter-spacing:-3px;width:86px;height:86px;display:grid;place-items:center;border-radius:27px;background:linear-gradient(140deg,#a99cff,#55d8ff);box-shadow:0 10px 45px #7476ff58;text-shadow:0 2px 10px #0002}
+#pw[data-s=boot] .lo1,#pw[data-s=boot] .pr{display:block}
+#pw[data-s=boot] .lo1{display:grid}
+#pw .pr{margin-top:0}
+#pw[data-s=lock] .lk{line-height:1.7}
+#pw .lk:after{content:'NangaiOS';display:block;font-size:12px;letter-spacing:2px;opacity:.7;margin-top:8px}
+#pb{box-shadow:0 0 0 7px #ffffff0a,inset 0 0 0 1px #ffffff25}
+.st h4{font-size:15px}
+.fi{min-height:40px}
+@media(max-width:700px){
+ #mb{left:6px;right:6px;gap:5px;padding:0 7px}
+ #brandName{font-size:11px}
+ #mb #lgb{font-size:10px;padding:2px 5px;max-width:88px;overflow:hidden}
+ #mb #sysmark{display:none}
+ #cl{font-size:10px}
+ #desktop{inset:48px 0 78px}
+ .brand-stamp{left:13px;top:9px}
+ #desktopApps{left:7px;top:66px;grid-template-columns:repeat(1,68px);gap:3px}
+ .desk-icon{width:65px;min-height:68px;padding:4px 2px;gap:4px}
+ .desk-icon .di{width:38px;height:38px;font-size:20px;border-radius:12px}
+ .desk-icon .label{font-size:10px}
+ #deskWidget{right:10px;top:12px;width:min(202px,calc(100vw - 108px));padding:12px;border-radius:16px}
+ #heroTime{font-size:30px}
+ #deskWidget .dw-foot{font-size:9px}
+ #dk{bottom:7px;gap:6px;padding:7px 8px 8px;border-radius:18px}
+ #dk button{width:42px;height:42px;font-size:22px;border-radius:12px}
+ .win{min-width:min(260px,calc(100vw - 12px))}
+ .win.mx{inset:48px 5px 70px 5px!important}
+}
+@media(max-width:390px){#lgb{display:none!important}#deskWidget{width:calc(100vw - 102px)}#dk{gap:4px;padding:6px}#dk button{width:37px;height:37px;font-size:20px}}
+
+</style></head><body class="lg">
+<svg width="0" height="0" style="position:absolute"><filter id="lq" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".012 .018" numOctaves="2" seed="7" result="n"/><feGaussianBlur in="n" stdDeviation="3" result="b"/><feDisplacementMap in="SourceGraphic" in2="b" scale="55" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
+<div id="scr"></div>
+<div id="desktop" aria-label="NangaiOS 桌面">
+ <div class="brand-stamp"><span class="mark">N</span><div><strong>NangaiOS</strong><small>PERSONAL WEB DESKTOP</small></div></div>
+ <div id="desktopApps" aria-label="桌面快捷方式">
+  <button class="desk-icon" data-app="files" title="打开文件管理器"><span class="di files">📁</span><span class="label">文件</span></button>
+  <button class="desk-icon" data-app="code" title="打开代码工作室"><span class="di code">💻</span><span class="label">开发工作室</span></button>
+  <button class="desk-icon" data-app="term" title="打开终端"><span class="di term">⌘</span><span class="label">终端</span></button>
+  <button class="desk-icon" data-app="ai" title="打开 AI 助手"><span class="di ai">✦</span><span class="label">AI 助手</span></button>
+  <button class="desk-icon" data-app="notes" title="打开便签"><span class="di notes">📝</span><span class="label">便签</span></button>
+  <button class="desk-icon" data-app="set" title="打开系统设置"><span class="di set">⚙</span><span class="label">系统设置</span></button>
+  <button class="desk-icon" data-app="apk" title="管理 APK 文件"><span class="di apk">📦</span><span class="label">APK 管理器</span></button>
+ </div>
+ <section id="deskWidget" class="g" aria-label="桌面信息">
+  <div class="dw-eyebrow">NangaiOS · 今日</div><div id="heroTime">00:00</div><div id="heroDate">正在读取日期…</div>
+  <div class="dw-line"></div><div class="dw-status"><span class="status-dot"></span><span>系统运行正常</span></div><div class="dw-foot">YOUR SPACE. YOUR FLOW.</div>
+ </section>
+</div>
+<div id="mb" class="g"><button id="lo" title="打开系统菜单" aria-label="NangaiOS 系统菜单">N</button><b id="brandName">NangaiOS</b><span class="sep"></span><b id="an">桌面</b><span class="sp"></span><span id="sysmark" title="网络连接状态">◉ Wi‑Fi　</span><button id="lgb" title="切换液态玻璃效果"></button><span id="cl"></span></div>
+<div id="dk" class="g" aria-label="应用程序 Dock"></div>
+<div id="dm"></div>
+<div id="pw" data-s="boot"><div class="lo1">◉</div><div class="pr"><i></i></div><div class="lk"><h1 id="ck"></h1><p id="dt"></p><span>点按任意处解锁</span></div><button id="pb">⏻</button></div>
+<script>
+const $=(s,e=document)=>e.querySelector(s),H=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=t=>esc(t).replace(/```\w*\n([\s\S]*?)(```|$)/g,(_,c)=>`<pre>${c}</pre><button class="bt oc">↗ 在代码编辑器中打开</button>`);
+const S=(k,v)=>{try{return v===undefined?JSON.parse(localStorage.getItem(k)):localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const st={wp:0,lg:true,br:100,...S('os')};
+const save=()=>S('os',{wp:Math.max(st.wp,0),lg:st.lg,br:st.br});
+const FS=S('fs')||{'hello.js':'console.log("你好，NangaiOS 👋")','index.html':'<body style="margin:0;display:grid;place-items:center;height:100vh;background:linear-gradient(135deg,#ff6bd6,#4d7cff);color:#fff;font:700 32px sans-serif">NangaiOS ✨</body>','笔记.txt':'欢迎使用 NangaiOS。这里是你的浏览器桌面。'};
+const WP=[
+'radial-gradient(50% 45% at 18% 22%,#ff6bd6cc,transparent),radial-gradient(45% 50% at 82% 18%,#4d7cffcc,transparent),radial-gradient(55% 55% at 65% 88%,#ffb25bcc,transparent),radial-gradient(40% 40% at 30% 80%,#2ee6c5aa,transparent),linear-gradient(135deg,#1a1038,#2a1560)',
+'radial-gradient(50% 50% at 25% 30%,#19d3ffaa,transparent),radial-gradient(60% 50% at 80% 75%,#2a5bffaa,transparent),radial-gradient(40% 40% at 70% 15%,#00ffc366,transparent),linear-gradient(160deg,#021a3a,#04304f)',
+'radial-gradient(60% 55% at 50% 100%,#ffd166,transparent),radial-gradient(55% 50% at 15% 30%,#ff5d73cc,transparent),radial-gradient(50% 50% at 85% 25%,#8a4dffbb,transparent),linear-gradient(180deg,#3a1c71,#d76d77)',
+'radial-gradient(50% 50% at 20% 25%,#7bff9acc,transparent),radial-gradient(55% 55% at 78% 70%,#1fb89acc,transparent),radial-gradient(40% 40% at 70% 15%,#d9f56a88,transparent),linear-gradient(150deg,#06251c,#0f4d3a)',
+'radial-gradient(50% 50% at 25% 25%,#fff,transparent),radial-gradient(55% 50% at 80% 30%,#ffb3d1,transparent),radial-gradient(60% 55% at 55% 90%,#c9b3ff,transparent),linear-gradient(135deg,#ffd9e8,#cfe3ff)',
+'radial-gradient(45% 45% at 30% 30%,#5b5bff66,transparent),radial-gradient(50% 50% at 75% 70%,#ff2f9266,transparent),linear-gradient(135deg,#07070d,#14141f)'];
+const SC=$('#scr'),P=$('#pw');let W={},z=10;
+if(window.chrome)document.documentElement.style.setProperty('--bf','url(#lq) blur(3px) saturate(1.8) brightness(1.1)');
+function setWP(i,u){st.wp=i;SC.style.cssText=u?`background-image:url(${u});background-size:cover;animation:none`:`background-image:${WP[i]}`;save()}
+function setLG(v){st.lg=v;document.body.classList.toggle('lg',v);document.querySelectorAll('.sw').forEach(e=>e.classList.toggle('on',v));$('#lgb').textContent='💧 玻璃：'+(v?'开':'关');save()}
+function setBR(v){st.br=v;$('#dm').style.opacity=(100-v)/125;save()}
+function power(s){
+ if(s=='off'){Object.values(W).forEach(w=>w.remove());W={};dock()}
+ P.dataset.s=s;
+ if(s=='boot')setTimeout(()=>P.dataset.s=='boot'&&power('lock'),2600)
+}
+const restart=()=>{power('off');setTimeout(()=>power('boot'),1100)};
+P.onclick=()=>{if(P.dataset.s=='lock')P.dataset.s=''};
+addEventListener('keydown',()=>{if(P.dataset.s=='lock')P.dataset.s=''});
+$('#pb').onclick=()=>power('boot');
+function pop(x,y,items){
+ $('.pm')?.remove();
+ const m=H('div','pm g');m.style.cssText=`left:${Math.max(4,Math.min(x,innerWidth-190))}px;top:${Math.min(y,innerHeight-items.length*32-20)}px`;
+ items.forEach(([t,f])=>{const d=H('div','mi',t);d.onclick=()=>{m.remove();f()};m.append(d)});
+ document.body.append(m)
+}
+addEventListener('pointerdown',e=>{if(!e.target.closest('.pm'))$('.pm')?.remove()},true);
+$('#lo').onclick=()=>pop(8,48,[['NangaiOS · 关于本机',()=>launch('set')],['文件管理器',()=>launch('files')],['开发工作室',()=>launch('code')],['终端',()=>launch('term')],['便签',()=>launch('notes')],['系统设置…',()=>launch('set')],['锁定屏幕',()=>power('lock')],['重新启动',restart],['关机',()=>power('off')]]);
+$('#lgb').onclick=()=>setLG(!st.lg);
+oncontextmenu=e=>{if(e.target.closest('.win,#pw'))return;e.preventDefault();pop(e.clientX,e.clientY,[['更换壁纸',()=>setWP((st.wp+1)%WP.length)],[(st.lg?'关闭':'开启')+'液态玻璃',()=>setLG(!st.lg)],['打开终端',()=>launch('term')],['系统设置…',()=>launch('set')]])};
+const tick=()=>{const d=new Date(),time=d.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false});$('#cl').textContent=d.toLocaleString('zh-CN',{month:'numeric',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false});$('#ck').textContent=time;$('#dt').textContent=d.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'});if($('#heroTime'))$('#heroTime').textContent=time;if($('#heroDate'))$('#heroDate').textContent=d.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'})};
+tick();setInterval(tick,2000);
+
+/* ---------- 窗口管理 ---------- */
+function dock(){
+ const f=Object.keys(W).find(k=>W[k].classList.contains('f'));
+ $('#an').textContent=f?A[f].t:'桌面';
+ document.querySelectorAll('#dk button').forEach(b=>b.classList.toggle('on',b.dataset.id in W))
+}
+function foc(w){document.querySelectorAll('.win').forEach(x=>x.classList.remove('f'));w.classList.add('f');w.style.zIndex=++z;dock()}
+function launch(id,arg){
+ let w=W[id];
+ if(!w){
+  const a=A[id],n=Object.keys(W).length;
+  w=W[id]=H('div','win g');
+  w.style.cssText=`left:${Math.min(80+n*34,Math.max(8,innerWidth-320))}px;top:${Math.min(52+n*28,Math.max(50,innerHeight-240))}px;width:${Math.min(a.w,innerWidth-16)}px;height:${Math.min(a.h,innerHeight-130)}px`;
+  w.innerHTML=`<div class=tb><i style="background:#ff5f57" title="关闭" aria-label="关闭窗口"></i><i style="background:#febc2e" title="最小化" aria-label="最小化窗口"></i><i style="background:#28c840" title="最大化/还原" aria-label="最大化或还原窗口"></i><b>${a.i} ${a.t}</b></div><div class=wb></div>`;
+  const [x,m,M]=w.querySelectorAll('i'),tb=$('.tb',w);
+  x.onclick=()=>{w.remove();delete W[id];dock()};
+  m.onclick=()=>{w.style.display='none';w.classList.remove('f');dock()};
+  M.onclick=()=>w.classList.toggle('mx');
+  tb.ondblclick=e=>{if(e.target.tagName!='I')w.classList.toggle('mx')};
+  tb.onpointerdown=e=>{if(e.target.tagName=='I'||w.classList.contains('mx'))return;const dx=e.clientX-w.offsetLeft,dy=e.clientY-w.offsetTop;tb.setPointerCapture(e.pointerId);tb.onpointermove=v=>{w.style.left=v.clientX-dx+'px';w.style.top=Math.max(44,v.clientY-dy)+'px'};tb.onpointerup=()=>{tb.onpointermove=null}};
+  w.onpointerdown=()=>foc(w);
+  document.body.append(w);a.f($('.wb',w),w)
+ }
+ w.style.display='';foc(w);if(arg&&w.ld)w.ld(arg)
+}
+
+/* ---------- 应用 ---------- */
+function fCode(b,w){
+ b.innerHTML=`<div class=col><div class=bar><input class="in" value="main.js" size=12><select class=in><option>JavaScript<option>HTML</select><button class=bt>▶ 运行</button><button class=bt>💾 保存</button></div><div class=sp><textarea spellcheck=false></textarea><iframe sandbox=allow-scripts></iframe></div></div>`;
+ const [fn,md]=b.querySelectorAll('.in'),[rb,sv]=b.querySelectorAll('.bt'),ta=$('textarea',b),fr=$('iframe',b);
+ ta.value="// 在这里写代码，Ctrl+Enter 运行，Ctrl+S 保存\nfor(let i=1;i<=5;i++)console.log('NangaiOS ×'+i)\nconsole.log(new Date().toLocaleString())";
+ const run=()=>{const c=ta.value;fr.srcdoc=md.value=='HTML'?c:`<body style="margin:8px;background:#0d1117;color:#8ff;font:12px/1.5 monospace;white-space:pre-wrap"><script>const o=document.body,p=(...a)=>o.append(a.map(x=>typeof x=='object'?JSON.stringify(x):x).join(' ')+'\\n');console.log=p;console.error=p;onerror=m=>p('❌ '+m);try{${c}\n}catch(e){p('❌ '+e)}<\/script>`};
+ const sav=()=>{if(!fn.value.trim())return;FS[fn.value]=ta.value;S('fs',FS);document.dispatchEvent(new Event('fs'));sv.textContent='✔ 已保存';setTimeout(()=>sv.textContent='💾 保存',1200)};
+ rb.onclick=run;sv.onclick=sav;
+ md.onchange=()=>fn.value=fn.value.replace(/\.\w+$/,md.value=='HTML'?'.html':'.js');
+ ta.onkeydown=e=>{const k=e.ctrlKey||e.metaKey;if(e.key=='Tab'){e.preventDefault();document.execCommand('insertText',false,'  ')}else if(k&&e.key=='Enter')run();else if(k&&e.key=='s'){e.preventDefault();sav()}};
+ w.ld=({n,c})=>{fn.value=n;ta.value=c;md.value=/\.html?$/.test(n)?'HTML':'JavaScript';run()};
+ run()
+}
+function fAI(b){
+ b.innerHTML=`<div class=col><div class=ch></div><div class=bar><input class="in" style="flex:1" placeholder="问点什么，或让 AI 写段代码…"><button class=bt>发送</button></div></div>`;
+ const ch=$('.ch',b),i=$('input',b),hist=[];let busy=0;
+ const add=(c,t)=>{const d=H('div','m '+c,t);ch.append(d);ch.scrollTop=1e9;return d};
+ add('a','你好，我是 NangaiOS 的 AI 助手。可以聊天，也能写代码，写好后一键放进编辑器运行。');
+ ch.onclick=e=>{if(e.target.classList.contains('oc')){const c=e.target.previousElementSibling.textContent;launch('code',{n:/<html|<body|<div/i.test(c)?'ai.html':'ai.js',c})}};
+ const go=async()=>{
+  const t=i.value.trim();if(!t||busy)return;i.value='';busy=1;
+  add('u',esc(t));hist.push({role:'user',content:t});
+  const d=add('a','…');
+  try{
+   const s=window.claude&&await claude.use('sample');if(!s)throw{message:'当前环境没有开通 AI 能力'};
+   const m=hist.map((x,k)=>k?x:{...x,content:'你是 NangaiOS 内置的 AI 助手。回答简洁；写代码用 markdown 代码块，网页用单个 HTML 文件。\n\n'+x.content});
+   const r=await s(m,{cache:false,onText:({text})=>{d.innerHTML=fmt(text);ch.scrollTop=1e9}});
+   d.innerHTML=fmt(r.text);hist.push({role:'assistant',content:r.text})
+  }catch(e){d.textContent='⚠️ '+(e.code=='not_granted'?'你没有授权使用 AI':e.message||'出错了');hist.pop()}
+  busy=0};
+ $('.bt',b).onclick=go;i.onkeydown=e=>{if(e.key=='Enter'&&!e.isComposing)go()}
+}
+function fTerm(b){
+ b.className+=' tm';
+ const o=H('div'),i=H('input');b.append(o,i);
+ const p=t=>{o.append(H('div','',esc(t)));b.scrollTop=1e9};
+ p('NangaiOS 1.0 终端 · 输入 help 查看命令');
+ const C={
+  help:()=>'ls · cat 文件 · run 文件 · date · echo · neofetch · glass on|off · wp 0-5 · clear · poweroff',
+  ls:()=>Object.keys(FS).join('  ')||'(空)',
+  cat:a=>FS[a[0]]??'没有这个文件',
+  run:a=>FS[a[0]]==null?'没有这个文件':(launch('code',{n:a[0],c:FS[a[0]]}),'已在编辑器中打开'),
+  date:()=>new Date().toLocaleString('zh-CN'),
+  echo:a=>a.join(' '),
+  neofetch:()=>`NangaiOS 1.0\nCPU：${navigator.hardwareConcurrency||'?'} 核\n屏幕：${innerWidth}×${innerHeight}\n玻璃：${st.lg?'液态':'普通'}`,
+  glass:a=>(setLG(a[0]!='off'),'液态玻璃已'+(st.lg?'开启':'关闭')),
+  wp:a=>(setWP(Math.min(Math.max(+a[0]||0,0),WP.length-1)),'壁纸已切换'),
+  clear:()=>(o.innerHTML='',''),
+  poweroff:()=>(setTimeout(()=>power('off'),400),'正在关机…')};
+ i.onkeydown=e=>{if(e.key!='Enter')return;const v=i.value.trim(),[c,...a]=v.split(/\s+/);i.value='';p('$ '+v);const r=C[c]?C[c](a):v?'未知命令：'+c:'';if(r)p(r)};
+ b.onclick=()=>i.focus();i.focus()
+}
+function fFiles(b){
+ const r=()=>{b.innerHTML=Object.keys(FS).map(n=>`<div class=fi data-n="${esc(n)}"><span>${/\.html?$/.test(n)?'🌐':/\.js$/.test(n)?'📜':'📄'}</span>${esc(n)}<small>${FS[n].length} 字符</small></div>`).join('')||'<div class=fi>还没有文件，在代码里按 Ctrl+S 保存一个</div>'};
+ r();b.ondblclick=e=>{const n=e.target.closest('.fi')?.dataset.n;if(n)launch('code',{n,c:FS[n]})};
+ document.addEventListener('fs',r)
+}
+function fNotes(b){
+ const name='便签.txt',seed=FS[name]||'欢迎来到 NangaiOS！\n\n这里可以记录你的想法、待办事项和灵感。';
+ b.innerHTML=`<div class="col"><div class="bar"><span style="opacity:.7">📝 本地便签</span><span class="sp"></span><button class="bt" data-save>保存</button></div><textarea aria-label="便签内容" spellcheck="false" style="flex:1;width:100%;min-height:0;resize:none;border:0;outline:0;padding:18px;background:rgba(255,255,255,.035);color:#fff;font:14px/1.8 -apple-system,sans-serif;white-space:pre-wrap" placeholder="写点什么…"></textarea><div style="padding:6px 12px;font-size:10px;opacity:.55">保存在此浏览器 · 不会上传到服务器</div></div>`;
+ const ta=$('textarea',b),saveBtn=$('[data-save]',b);ta.value=seed;
+ const saveNote=()=>{FS[name]=ta.value;S('fs',FS);document.dispatchEvent(new Event('fs'));saveBtn.textContent='✓ 已保存';setTimeout(()=>saveBtn.textContent='保存',1000)};
+ saveBtn.onclick=saveNote;ta.addEventListener('input',()=>{saveBtn.textContent='未保存';});
+}
+function fAPK(b){
+ const uploads=[];let activeSession=null;let apiBase=localStorage.getItem('nangai_api_base')||(location.protocol==='http:'||location.protocol==='https:'?location.origin:'');let accessPassword=sessionStorage.getItem('nangai_access_password')||'';
+ b.innerHTML=`<div class="col" style="gap:0;min-height:0"><div style="padding:14px 16px 8px"><div style="font-size:20px;font-weight:700;margin-bottom:5px">📦 APK 云端运行器</div><div style="opacity:.72;line-height:1.6">把 APK 上传到云端 Android 设备，并在此窗口里真实启动和操作应用。</div></div><div style="padding:0 14px 10px;display:grid;gap:7px"><label style="font-size:11px;opacity:.7">后端 API 地址</label><input data-api-base value="${esc(apiBase)}" placeholder="https://你的后端域名" style="width:100%;padding:9px 10px;border-radius:9px;background:#ffffff10;color:inherit;border:1px solid #ffffff25;outline:none"><label style="font-size:11px;opacity:.7">访问密码（由服务器管理员设置）</label><input data-access-password type="password" value="${esc(accessPassword)}" placeholder="APP_ACCESS_PASSWORD" style="width:100%;padding:9px 10px;border-radius:9px;background:#ffffff10;color:inherit;border:1px solid #ffffff25;outline:none"><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="bt" data-save-api>保存连接设置</button><button class="bt" data-health>检查云端状态</button></div></div><div style="padding:0 14px 10px"><label class="bt" style="display:inline-flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer">＋ 选择 APK 文件<input data-apk-input type="file" accept=".apk,application/vnd.android.package-archive" multiple hidden></label><div style="font-size:11px;opacity:.55;margin-top:6px">文件会发送到你配置的云端服务；请只上传你信任且有权使用的 APK。</div></div><div data-apk-status style="padding:0 14px 8px;color:#ffd18b;font-size:12px">尚未选择文件</div><div data-apk-list style="overflow:auto;flex:1;min-height:90px;padding:0 10px 10px"><div style="padding:12px;text-align:center;opacity:.55">选择 APK 后会显示在这里</div></div><div data-apk-player style="display:none;flex:1;flex-direction:column;min-height:280px;padding:8px 10px 12px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><strong data-session-title>Android 云端设备</strong><span style="flex:1"></span><button class="bt" data-stop-session>结束会话</button></div><iframe data-session-frame title="云端 Android 应用" allow="clipboard-write; fullscreen" style="width:100%;height:100%;min-height:330px;border:1px solid #ffffff25;border-radius:12px;background:#080a12"></iframe></div><div style="padding:9px 14px;border-top:1px solid #ffffff20;font-size:10px;opacity:.68;line-height:1.6">运行原理：服务器持有云端 Android 服务密钥，上传 APK 并创建隔离设备会话。iPad/iPhone 只负责显示和触控。需联网、HTTPS、有效后端与云端服务账号；部分 APK 因 ABI、Google 服务、DRM 或硬件依赖无法运行。</div></div>`;
+ const input=$('[data-apk-input]',b),list=$('[data-apk-list]',b),status=$('[data-apk-status]',b),player=$('[data-apk-player]',b),frame=$('[data-session-frame]',b);
+ const size=n=>n<1024?`${n} B`:n<1024*1024?`${(n/1024).toFixed(1)} KB`:`${(n/1024/1024).toFixed(2)} MB`;
+ const base=()=>($('[data-api-base]',b).value.trim().replace(/\/+$/,'')||location.origin);
+ const headers=()=>({'X-Access-Password':$('[data-access-password]',b).value});
+ const api=async(path,options={})=>{const res=await fetch(base()+path,{...options,headers:{...headers(),...(options.headers||{})}});let data={};try{data=await res.json()}catch{}if(!res.ok)throw new Error(data.error||data.message||`HTTP ${res.status}`);return data};
+ const render=()=>{if(!uploads.length){list.innerHTML='<div style="padding:12px;text-align:center;opacity:.55">选择 APK 后会显示在这里</div>';return}list.innerHTML=uploads.map((f,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:10px;border-radius:12px;margin-bottom:7px;background:#ffffff0c;border:1px solid #ffffff15"><div style="font-size:23px">📦</div><div style="flex:1;min-width:0"><div style="font-weight:600;overflow-wrap:anywhere">${esc(f.name)}</div><div style="opacity:.6;font-size:11px;margin-top:3px">${size(f.size)}</div><input data-package-id="${i}" placeholder="Android 包名，例如 com.example.app" aria-label="${esc(f.name)} 的 Android 包名" style="margin-top:7px;width:100%;padding:7px 8px;border-radius:7px;background:#ffffff10;color:inherit;border:1px solid #ffffff20"></div><button class="bt" data-run="${i}" style="white-space:nowrap">运行</button><button class="bt" data-download="${i}" style="white-space:nowrap">下载</button><button class="bt" data-remove="${i}" title="移除文件">✕</button></div>`).join('')};
+ input.onchange=()=>{const files=Array.from(input.files||[]);let added=0;for(const f of files){if(!f.name.toLowerCase().endsWith('.apk'))continue;if(uploads.some(x=>x.name===f.name&&x.size===f.size))continue;uploads.push(f);added++}status.textContent=added?`已选择 ${added} 个 APK；点击“运行”后才会上传到云端。`:'未添加新文件，请选择 .apk 文件';render();input.value=''};
+ $('[data-save-api]',b).onclick=()=>{apiBase=base();accessPassword=$('[data-access-password]',b).value;localStorage.setItem('nangai_api_base',apiBase);sessionStorage.setItem('nangai_access_password',accessPassword);status.textContent='连接设置已保存到此浏览器；密码仅保存在当前标签页会话。'};
+ $('[data-health]',b).onclick=async()=>{try{const r=await api('/api/health');status.textContent=`后端已连接：${r.runtime||'Android 云端运行服务'}；${r.configured?'云端密钥已配置':'服务器尚未配置云端密钥'}`}catch(e){status.textContent=`连接失败：${e.message}`}};
+ list.onclick=async e=>{const run=e.target.closest('[data-run]'),d=e.target.closest('[data-download]'),r=e.target.closest('[data-remove]');if(d){const f=uploads[+d.dataset.download];if(!f)return;const url=URL.createObjectURL(f),a=document.createElement('a');a.href=url;a.download=f.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}if(r){uploads.splice(+r.dataset.remove,1);status.textContent='已从列表移除文件';render()}if(run){const idx=+run.dataset.run,f=uploads[idx],packageInput=$(`[data-package-id="${idx}"]`,list),packageId=(packageInput?.value||'').trim();if(!f)return;if(!/^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z][A-Za-z0-9_]*)+$/.test(packageId)){status.textContent='请先填写正确的 Android 包名，例如 com.example.app。';packageInput?.focus();return}run.disabled=true;run.textContent='上传中…';status.textContent='正在安全上传 APK 并启动云端 Android 设备，请稍候…';try{const fd=new FormData();fd.append('apk',f,f.name);fd.append('packageId',packageId);fd.append('name',f.name.replace(/\.apk$/i,'').slice(0,70));const result=await api('/api/runtime/start',{method:'POST',body:fd});activeSession=result.sessionId;frame.src=result.embedUrl;player.style.display='flex';list.style.display='none';input.disabled=true;$('[data-session-title]',b).textContent=`正在运行：${f.name}`;status.textContent='云端会话已创建，正在加载 Android 画面。';}catch(err){status.textContent=`启动失败：${err.message}`}finally{run.disabled=false;run.textContent='运行'}}};
+ $('[data-stop-session]',b).onclick=async()=>{if(!activeSession)return;const old=activeSession;status.textContent='正在结束云端会话…';try{await api(`/api/runtime/${encodeURIComponent(old)}/stop`,{method:'POST'});status.textContent='云端会话已结束。'}catch(e){status.textContent=`结束会话失败：${e.message}`}finally{activeSession=null;frame.src='about:blank';player.style.display='none';list.style.display='block';input.disabled=false}};
+}
+function fSet(b){
+ b.className+=' st';
+ b.innerHTML=`<h4>壁纸</h4><div class=wg>${WP.map((w,i)=>`<i data-i=${i} style="background-image:${w}"></i>`).join('')}<label class=up>＋<input type=file accept="image/*" hidden></label></div><div class=row>💧 液态玻璃<span class="sw${st.lg?' on':''}"></span></div><div class=row>🔆 亮度<input type=range min=30 max=100 value=${st.br}></div><div class=row>🖥 本机<small>${navigator.hardwareConcurrency||'?'} 核 · ${innerWidth}×${innerHeight} · NangaiOS 1.0</small></div>`;
+ b.onclick=e=>{const i=e.target.dataset.i;if(i!=null)setWP(+i);if(e.target.closest('.sw'))setLG(!st.lg)};
+ $('input[type=file]',b).onchange=e=>{const f=e.target.files[0];if(f)setWP(-1,URL.createObjectURL(f))};
+ $('input[type=range]',b).oninput=e=>setBR(+e.target.value)
+}
+const A={
+ code:{t:'代码',i:'💻',c:['#4f8cff','#7a5cff'],w:720,h:440,f:fCode},
+ ai:{t:'AI 助手',i:'✨',c:['#ff7ac8','#ff9f5a'],w:420,h:520,f:fAI},
+ term:{t:'终端',i:'⌨️',c:['#2b2f3a','#12141b'],w:560,h:340,f:fTerm},
+ notes:{t:'便签',i:'📝',c:['#ffe995','#ffac53'],w:420,h:360,f:fNotes},
+ files:{t:'文件',i:'📁',c:['#3ec6ff','#2a7bff'],w:440,h:320,f:fFiles},
+ set:{t:'设置',i:'⚙️',c:['#9aa4b8','#5d667a'],w:540,h:420,f:fSet},
+ apk:{t:'APK 管理器',i:'📦',c:['#38d9a9','#2788d8'],w:580,h:460,f:fAPK}};
+$('#dk').innerHTML=Object.entries(A).map(([k,a])=>`<button data-id="${k}" title="${a.t}" style="--a:${a.c[0]};--b:${a.c[1]}">${a.i}<u></u></button>`).join('');
+$('#dk').onclick=e=>{const b=e.target.closest('button');if(b)launch(b.dataset.id)};
+const deskApps=$('#desktopApps');
+if(deskApps){
+ deskApps.addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(!b)return;document.querySelectorAll('.desk-icon').forEach(x=>x.classList.toggle('selected',x===b));if(matchMedia('(pointer: coarse)').matches)launch(b.dataset.app)});
+ deskApps.addEventListener('dblclick',e=>{const b=e.target.closest('[data-app]');if(b)launch(b.dataset.app)});
+}
+
+setWP(st.wp);setLG(st.lg);setBR(st.br);power('boot');
+</script></body></html>
