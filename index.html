@@ -272,9 +272,8 @@ const $=(s,e=document)=>e.querySelector(s),H=(t,c,h)=>{const e=document.createEl
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=t=>esc(t).replace(/```\w*\n([\s\S]*?)(```|$)/g,(_,c)=>`<pre>${c}</pre><button class="bt oc">↗ 在代码编辑器中打开</button>`);
 const S=(k,v)=>{try{return v===undefined?JSON.parse(localStorage.getItem(k)):localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
-const st={wp:0,lg:true,br:100,uiScale:75,...S('os')};
-const save=()=>S('os',{wp:Math.max(st.wp,0),lg:st.lg,br:st.br,uiScale:st.uiScale});
-function setUIScale(v){st.uiScale=Math.max(40,Math.min(100,Number(v)||75));document.body.style.zoom=(st.uiScale/100);const out=$('#uiScaleValue');if(out)out.textContent=st.uiScale+'%';save()}
+const st={wp:0,lg:true,br:100,...S('os')};
+const save=()=>S('os',{wp:Math.max(st.wp,0),lg:st.lg,br:st.br});
 const FS=S('fs')||{'hello.js':'console.log("你好，NangaiOS 👋")','index.html':'<body style="margin:0;display:grid;place-items:center;height:100vh;background:linear-gradient(135deg,#ff6bd6,#4d7cff);color:#fff;font:700 32px sans-serif">NangaiOS ✨</body>','笔记.txt':'欢迎使用 NangaiOS。这里是你的浏览器桌面。'};
 const WP=[
 'radial-gradient(50% 45% at 18% 22%,#ff6bd6cc,transparent),radial-gradient(45% 50% at 82% 18%,#4d7cffcc,transparent),radial-gradient(55% 55% at 65% 88%,#ffb25bcc,transparent),radial-gradient(40% 40% at 30% 80%,#2ee6c5aa,transparent),linear-gradient(135deg,#1a1038,#2a1560)',
@@ -402,10 +401,10 @@ function fNotes(b){
 }
 function fSet(b){
  b.className+=' st';
- b.innerHTML=`<h4>显示与外观</h4><div class=row style="display:block"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px"><span>🔎 网页显示大小</span><strong id="uiScaleValue">${st.uiScale||75}%</strong></div><input id="uiScaleRange" aria-label="网页显示大小" type=range min=40 max=100 step=5 value=${st.uiScale||75} style="width:100%;accent-color:#a9a5ff"><div style="display:flex;justify-content:space-between;opacity:.65;font-size:10px;margin-top:4px"><span>很小 40%</span><span>默认 75%</span><span>100%</span></div><div style="font-size:10px;opacity:.65;margin-top:7px">调整桌面、窗口、图标和游戏大厅的整体显示比例。</div></div><h4 style="margin-top:16px">壁纸</h4><div class=wg>${WP.map((w,i)=>`<i data-i=${i} style="background-image:${w}"></i>`).join('')}<label class=up>＋<input type=file accept="image/*" hidden></label></div><div class=row>💧 液态玻璃<span class="sw${st.lg?' on':''}"></span></div><div class=row>🔆 亮度<input type=range min=30 max=100 value=${st.br}></div><div class=row>🖥 本机<small>${navigator.hardwareConcurrency||'?'} 核 · ${innerWidth}×${innerHeight} · NangaiOS 1.0</small></div>`;
+ b.innerHTML=`<h4>显示与外观</h4><h4>壁纸</h4><div class=wg>${WP.map((w,i)=>`<i data-i=${i} style="background-image:${w}"></i>`).join('')}<label class=up>＋<input type=file accept="image/*" hidden></label></div><div class=row>💧 液态玻璃<span class="sw${st.lg?' on':''}"></span></div><div class=row>🔆 亮度<input type=range min=30 max=100 value=${st.br}></div><div class=row>🖥 本机<small>${navigator.hardwareConcurrency||'?'} 核 · ${innerWidth}×${innerHeight} · NangaiOS 1.0</small></div>`;
  b.onclick=e=>{const i=e.target.dataset.i;if(i!=null)setWP(+i);if(e.target.closest('.sw'))setLG(!st.lg)};
  $('input[type=file]',b).onchange=e=>{const f=e.target.files[0];if(f)setWP(-1,URL.createObjectURL(f))};
- const sliders=b.querySelectorAll('input[type=range]');sliders[0].oninput=e=>setUIScale(e.target.value);sliders[1].oninput=e=>setBR(+e.target.value)
+ const sliders=b.querySelectorAll('input[type=range]');sliders[0].oninput=e=>setBR(+e.target.value)
 }
 
 /* ---------- 游戏大厅：从个人网站提取的 6 个游戏快捷入口 ---------- */
@@ -450,5 +449,5 @@ if(deskApps){
  deskApps.addEventListener('dblclick',e=>{const b=e.target.closest('[data-app]');if(b)launch(b.dataset.app)});
 }
 
-setWP(st.wp);setLG(st.lg);setBR(st.br);setUIScale(st.uiScale||75);power('boot');
+setWP(st.wp);setLG(st.lg);setBR(st.br);document.body.style.zoom='1';power('boot');
 </script></body></html>
