@@ -147,6 +147,27 @@ body{background:#080a16}
 }
 @media(max-width:390px){#lgb{display:none!important}#deskWidget{width:calc(100vw - 102px)}#dk{gap:4px;padding:6px}#dk button{width:37px;height:37px;font-size:20px}}
 
+
+/* ---------- Game launcher cards ---------- */
+.games-app{padding:16px;background:linear-gradient(145deg,rgba(15,22,44,.96),rgba(26,19,48,.92));color:#f8fafc;min-height:100%;font-family:inherit}
+.games-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.games-head h2{font-size:20px;font-weight:800;letter-spacing:.2px}
+.games-head p{font-size:11px;opacity:.68;margin-top:3px}
+.games-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.game-tile{display:flex;flex-direction:column;min-width:0;overflow:hidden;text-decoration:none;color:inherit;border-radius:15px;border:1px solid rgba(255,255,255,.15);background:linear-gradient(145deg,rgba(255,255,255,.105),rgba(255,255,255,.035));transition:transform .18s,border-color .18s,background .18s;box-shadow:0 9px 24px rgba(0,0,0,.16)}
+.game-tile:hover{transform:translateY(-3px);border-color:rgba(155,185,255,.7);background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.06))}
+.game-art{height:94px;display:grid;place-items:center;font-size:42px;position:relative;overflow:hidden;background:var(--game-bg)}
+.game-art:before,.game-art:after{content:"";position:absolute;width:125px;height:125px;border:1px solid #ffffff22;border-radius:50%;transform:translate(42px,24px)}
+.game-art:after{width:82px;height:82px;transform:translate(-48px,-24px)}
+.game-art span{filter:drop-shadow(0 5px 7px #0005);z-index:1}
+.game-info{padding:10px;display:flex;flex-direction:column;gap:5px;flex:1}
+.game-info strong{font-size:13px;font-weight:750}
+.game-info small{font-size:10px;opacity:.62;overflow-wrap:anywhere}
+.game-launch{margin-top:5px;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 8px;border-radius:9px;background:rgba(139,160,255,.18);border:1px solid rgba(160,175,255,.25);font-size:11px;font-weight:700}
+.game-tile:hover .game-launch{background:rgba(139,160,255,.32)}
+.games-note{margin-top:12px;font-size:10px;opacity:.55;text-align:center}
+@media(max-width:420px){.games-app{padding:10px}.games-grid{gap:8px}.game-art{height:76px;font-size:35px}.game-info{padding:8px}.game-info strong{font-size:12px}}
+
 </style></head><body class="lg">
 <svg width="0" height="0" style="position:absolute"><filter id="lq" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".012 .018" numOctaves="2" seed="7" result="n"/><feGaussianBlur in="n" stdDeviation="3" result="b"/><feDisplacementMap in="SourceGraphic" in2="b" scale="55" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <div id="scr"></div>
@@ -159,6 +180,7 @@ body{background:#080a16}
   <button class="desk-icon" data-app="ai" title="打开 AI 助手"><span class="di ai">✦</span><span class="label">AI 助手</span></button>
   <button class="desk-icon" data-app="notes" title="打开便签"><span class="di notes">📝</span><span class="label">便签</span></button>
   <button class="desk-icon" data-app="set" title="打开系统设置"><span class="di set">⚙</span><span class="label">系统设置</span></button>
+  <button class="desk-icon" data-app="games" title="打开游戏大厅"><span class="di games" style="background:linear-gradient(145deg,#ffb86c,#f43f8e)">🎮</span><span class="label">游戏大厅</span></button>
  </div>
  <section id="deskWidget" class="g" aria-label="桌面信息">
   <div class="dw-eyebrow">NangaiOS · 今日</div><div id="heroTime">00:00</div><div id="heroDate">正在读取日期…</div>
@@ -308,6 +330,20 @@ function fSet(b){
  $('input[type=file]',b).onchange=e=>{const f=e.target.files[0];if(f)setWP(-1,URL.createObjectURL(f))};
  $('input[type=range]',b).oninput=e=>setBR(+e.target.value)
 }
+
+/* ---------- 游戏大厅：从个人网站提取的 6 个游戏快捷入口 ---------- */
+function fGames(b){
+ const games=[
+  {name:'Minecraft',sub:'方块世界 · mc.github.io',url:'https://wzh131213-dev.github.io/mc.github.io/',emoji:'⛏️',bg:'radial-gradient(circle at 25% 20%,#9be15d,#159957 58%,#153d38)'},
+  {name:'公路之王',sub:'赛车竞速 · wzh131213-dev-games',url:'https://wzh131213-dev.github.io/wzh131213-dev-games.github.io/',emoji:'🏎️',bg:'radial-gradient(circle at 70% 20%,#ffdf7e,#ff6b35 48%,#5d174d)'},
+  {name:'修仙世界',sub:'东方幻想 · xiuxianshijie',url:'https://wzh131213-dev.github.io/xiuxianshijie.github.io/',emoji:'🗡️',bg:'radial-gradient(circle at 50% 20%,#d8b4fe,#6d28d9 52%,#111827)'},
+  {name:'Cession',sub:'游戏项目 · cession.github.io',url:'https://wzh131213-dev.github.io/cession.github.io/',emoji:'⚔️',bg:'radial-gradient(circle at 25% 25%,#67e8f9,#2563eb 48%,#172554)'},
+  {name:'Hi1 游戏',sub:'独立游戏 · hi1.github.io',url:'https://wzh131213-dev.github.io/hi1.github.io/',emoji:'🕹️',bg:'radial-gradient(circle at 70% 20%,#f9a8d4,#9333ea 50%,#312e81)'},
+  {name:'Disheng',sub:'游戏项目 · disheng.github.io',url:'https://wzh131213-dev.github.io/disheng.github.io/',emoji:'🐉',bg:'radial-gradient(circle at 30% 20%,#fda4af,#be123c 48%,#3f1028)'}
+ ];
+ b.innerHTML='<div class="games-app"><div class="games-head"><div><h2>🎮 游戏大厅</h2><p>你的游戏，一键启动</p></div><span style="font-size:11px;opacity:.65">6 GAMES</span></div><div class="games-grid">'+games.map(g=>'<a class="game-tile" href="'+g.url+'" target="_blank" rel="noopener noreferrer"><div class="game-art" style="--game-bg:'+g.bg+'"><span>'+g.emoji+'</span></div><div class="game-info"><strong>'+g.name+'</strong><small>'+g.sub+'</small><span class="game-launch">启动游戏 <span aria-hidden="true">↗</span></span></div></a>').join('')+'</div><div class="games-note">游戏将在新标签页打开 · 请确保网络连接正常</div></div>';
+}
+
 const A={
  code:{t:'代码',i:'💻',c:['#4f8cff','#7a5cff'],w:720,h:440,f:fCode},
  ai:{t:'AI 助手',i:'✨',c:['#ff7ac8','#ff9f5a'],w:420,h:520,f:fAI},
@@ -315,6 +351,7 @@ const A={
  notes:{t:'便签',i:'📝',c:['#ffe995','#ffac53'],w:420,h:360,f:fNotes},
  files:{t:'文件',i:'📁',c:['#3ec6ff','#2a7bff'],w:440,h:320,f:fFiles},
  set:{t:'设置',i:'⚙️',c:['#9aa4b8','#5d667a'],w:540,h:420,f:fSet},
+ games:{t:'游戏大厅',i:'🎮',c:['#ffb86c','#f43f8e'],w:620,h:520,f:fGames},
 };
 $('#dk').innerHTML=Object.entries(A).map(([k,a])=>`<button data-id="${k}" title="${a.t}" style="--a:${a.c[0]};--b:${a.c[1]}">${a.i}<u></u></button>`).join('');
 $('#dk').onclick=e=>{const b=e.target.closest('button');if(b)launch(b.dataset.id)};
