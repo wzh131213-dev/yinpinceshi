@@ -371,8 +371,8 @@ $('#lo').onclick=()=>{pop(8,innerHeight-76,[['NangaiOS · 关于本机',()=>laun
 $('#trayMore').onclick=()=>pop(innerWidth-210,innerHeight-76,[['网络：已连接',()=>{}],['音量设置',()=>launch('set')],['电源与电池',()=>launch('set')],['系统设置…',()=>launch('set')]]);
 $('#lgb').onclick=()=>setLG(!st.lg);
 oncontextmenu=e=>{if(e.target.closest('.win,#pw'))return;e.preventDefault();pop(e.clientX,e.clientY,[['更换壁纸',()=>setWP((st.wp+1)%WP.length)],[(st.lg?'关闭':'开启')+'液态玻璃',()=>setLG(!st.lg)],['打开终端',()=>launch('term')],['系统设置…',()=>launch('set')]])};
-const tick=()=>{const d=new Date(),time=d.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false});$('#cl').textContent=d.toLocaleString('zh-CN',{month:'numeric',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false});$('#ck').textContent=time;$('#dt').textContent=d.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'});if($('#heroTime'))$('#heroTime').textContent=time;if($('#heroDate'))$('#heroDate').textContent=d.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'})};
-tick();setInterval(tick,2000);
+const tick=()=>{const d=new Date(),time=d.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});$('#cl').textContent=d.toLocaleString('zh-CN',{month:'numeric',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});$('#ck').textContent=time;$('#dt').textContent=d.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'});if($('#heroTime'))$('#heroTime').textContent=time;if($('#heroDate'))$('#heroDate').textContent=d.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'})};
+tick();setInterval(tick,1000);
 /* iOS Safari gesture zoom guard; preserve native gestures inside embedded games */
 if(!matchMedia('(pointer:fine)').matches){
  document.addEventListener('gesturestart',e=>{if(!e.target.closest('iframe'))e.preventDefault()},{passive:false});
