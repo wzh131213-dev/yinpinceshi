@@ -244,6 +244,17 @@ body{background:#080a16}
 .game-loading{position:absolute;inset:0;z-index:1;display:grid;place-items:center;background:#0b1020;color:#dbeafe;pointer-events:none}
 @media(max-width:700px){.game-playerbar{gap:5px}.game-playerbar .bt{padding:5px 7px;font-size:10px}.games-app{padding:8px}.games-head{margin-bottom:8px}.game-framebox{min-height:0}}
 
+
+/* Display scaling applies only to the desktop shell; game windows and iframe viewport stay native-sized. */
+:root{--ui-scale:1}
+#desktopApps{transform:scale(var(--ui-scale));transform-origin:top left}
+#deskWidget{transform:scale(var(--ui-scale));transform-origin:top right}
+#dk{zoom:var(--ui-scale)}
+.win:not(.game-active){font-size:calc(1em * var(--ui-scale))}
+.win:not(.game-active)>.tb{font-size:calc(1em * var(--ui-scale))}
+.games-app,.games-app *{zoom:1!important;transform-origin:initial}
+.win.game-active{font-size:initial!important}
+.win.game-active>.tb{font-size:initial!important}
 </style></head><body class="lg">
 <svg width="0" height="0" style="position:absolute"><filter id="lq" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".012 .018" numOctaves="2" seed="7" result="n"/><feGaussianBlur in="n" stdDeviation="3" result="b"/><feDisplacementMap in="SourceGraphic" in2="b" scale="55" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <div id="scr"></div>
@@ -408,16 +419,6 @@ function fSet(b){
  const sliders=b.querySelectorAll('input[type=range]');sliders[0].oninput=e=>setUIScale(e.target.value);sliders[1].oninput=e=>setBR(+e.target.value)
 }
 
-/* Display scaling applies only to the desktop shell; game windows and iframe viewport stay native-sized. */
-:root{--ui-scale:1}
-#desktopApps{transform:scale(var(--ui-scale));transform-origin:top left}
-#deskWidget{transform:scale(var(--ui-scale));transform-origin:top right}
-#dk{zoom:var(--ui-scale)}
-.win:not(.game-active){font-size:calc(1em * var(--ui-scale))}
-.win:not(.game-active)>.tb{font-size:calc(1em * var(--ui-scale))}
-.games-app,.games-app *{zoom:1!important;transform-origin:initial}
-.win.game-active{font-size:initial!important}
-.win.game-active>.tb{font-size:initial!important}
 /* ---------- 游戏大厅：从个人网站提取的 6 个游戏快捷入口 ---------- */
 function fGames(b){
  const games=[
