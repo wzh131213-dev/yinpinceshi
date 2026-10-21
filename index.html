@@ -165,6 +165,10 @@ body{background:#080a16}
  .games-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
  
+/* Embedded game iframe must ignore the global workspace iframe flex rules */
+.win.game-active .game-framebox{display:flex;align-items:stretch;justify-content:stretch}
+.win.game-active iframe.game-frame{flex:1 1 100%;width:100%!important;min-width:100%;max-width:100%;height:100%!important;min-height:0;border:0;display:block;align-self:stretch}
+.win.game-active .game-playerbar{width:100%;max-width:100%}
 /* ---------- Game window sizing and safer window controls ---------- */
 .tb{height:42px;gap:10px;padding:0 14px}
 .tb i{width:17px;height:17px;min-width:17px;min-height:17px;position:relative;box-shadow:0 0 0 5px transparent}
