@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8"><title>NangaiOS · 网页电脑操作系统</title>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101225"><meta name="description" content="NangaiOS：运行在浏览器中的液态玻璃桌面操作系统">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#101225"><meta name="description" content="NangaiOS：运行在浏览器中的液态玻璃桌面操作系统">
 <style>
 *{box-sizing:border-box;margin:0;font:13px/1.45 -apple-system,"SF Pro Text","PingFang SC","Microsoft YaHei",sans-serif}
 html,body{height:100%;overflow:hidden;background:#000;color:#fff;-webkit-user-select:none;user-select:none}
+/* Prevent mobile browser double-tap and pinch zoom on the desktop shell */
+html,body{touch-action:pan-x pan-y;overscroll-behavior:none;-webkit-text-size-adjust:100%}
 input,textarea,.m,.tm,iframe{-webkit-user-select:text;user-select:text}
 :root{--bf:blur(18px) saturate(1.8) brightness(1.1)}
 #scr{position:fixed;inset:0;background-size:150% 150%;animation:mv 30s ease-in-out infinite alternate}
@@ -354,6 +356,12 @@ $('#lgb').onclick=()=>setLG(!st.lg);
 oncontextmenu=e=>{if(e.target.closest('.win,#pw'))return;e.preventDefault();pop(e.clientX,e.clientY,[['更换壁纸',()=>setWP((st.wp+1)%WP.length)],[(st.lg?'关闭':'开启')+'液态玻璃',()=>setLG(!st.lg)],['打开终端',()=>launch('term')],['系统设置…',()=>launch('set')]])};
 const tick=()=>{const d=new Date(),time=d.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false});$('#cl').textContent=d.toLocaleString('zh-CN',{month:'numeric',day:'numeric',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false});$('#ck').textContent=time;$('#dt').textContent=d.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'});if($('#heroTime'))$('#heroTime').textContent=time;if($('#heroDate'))$('#heroDate').textContent=d.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'})};
 tick();setInterval(tick,2000);
+/* iOS Safari gesture zoom guard; preserve native gestures inside embedded games */
+if(!matchMedia('(pointer:fine)').matches){
+ document.addEventListener('gesturestart',e=>{if(!e.target.closest('iframe'))e.preventDefault()},{passive:false});
+ document.addEventListener('gesturechange',e=>{if(!e.target.closest('iframe'))e.preventDefault()},{passive:false});
+ document.addEventListener('gestureend',e=>{if(!e.target.closest('iframe'))e.preventDefault()},{passive:false});
+}
 
 /* ---------- 窗口管理 ---------- */
 function dock(){
