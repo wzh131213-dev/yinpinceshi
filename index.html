@@ -186,13 +186,14 @@ body{background:#080a16}
 /* ---------- Layout width guard: prevent app/window horizontal overflow ---------- */
 .win{max-width:calc(100vw - 16px);min-width:min(260px,calc(100vw - 12px))}
 .win.mx{left:8px!important;right:8px!important;min-width:0!important;max-width:none!important;resize:none}
- /* When iPad keyboard is open, the keyboard is the top layer; the desktop taskbar stays below it. */
-.voice-keyboard-open #mb,.voice-keyboard-open #dk{display:flex!important;z-index:5000!important}
-.voice-keyboard-open #dk{z-index:5001!important}
+/* Status bar rewrite: when the iPad keyboard opens, move the taskbar down behind the native keyboard.
+   The keyboard belongs to iPadOS and cannot be assigned a web z-index. */
+#mb{transform:translate3d(0,var(--taskbar-keyboard-shift,0px),0);transition:transform .08s linear}
+#dk{transform:translate3d(-50%,var(--dock-keyboard-shift,0px),0);transition:transform .08s linear}
+.voice-keyboard-open #mb{z-index:1!important;pointer-events:none!important}
+.voice-keyboard-open #dk{z-index:1!important;pointer-events:none!important}
 .voice-keyboard-open .win.voice-kbd-fit{z-index:1000!important}
 .voice-keyboard-open #pw{z-index:9000!important}
-.voice-keyboard-open #mb{pointer-events:none!important}
-.voice-keyboard-open #dk{pointer-events:none!important}
 .wb{width:100%;max-width:100%;min-width:0}
 .games-app{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
 .games-head,.games-grid,.game-player,.game-playerbar,.game-framebox{min-width:0;max-width:100%}
@@ -420,8 +421,12 @@ function syncVoiceKeyboardLayout(){
  if(visibleHeight>voiceViewportMaxHeight)voiceViewportMaxHeight=visibleHeight;
  const voiceWindow=W.voice;
  const activeVoice=!!(voiceWindow&&voiceWindow.isConnected&&voiceWindow.classList.contains('f')&&voiceWindow.style.display!=='none');
- const keyboardOpen=activeVoice&&(voiceViewportMaxHeight-visibleHeight)>Math.max(140,voiceViewportMaxHeight*.18);
+ const keyboardOverlap=Math.max(0,voiceViewportMaxHeight-visibleHeight);
+ const keyboardOpen=activeVoice&&keyboardOverlap>Math.max(140,voiceViewportMaxHeight*.18);
  document.body.classList.toggle('voice-keyboard-open',keyboardOpen);
+ const shift=keyboardOpen?Math.max(0,keyboardOverlap):0;
+ document.documentElement.style.setProperty('--taskbar-keyboard-shift',shift+'px');
+ document.documentElement.style.setProperty('--dock-keyboard-shift',shift+'px');
  if(!voiceWindow)return;
  if(keyboardOpen){
   const leftOffset=vv?vv.offsetLeft:0;
