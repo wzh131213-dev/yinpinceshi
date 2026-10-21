@@ -188,10 +188,9 @@ body{background:#080a16}
 .win.mx{left:8px!important;right:8px!important;min-width:0!important;max-width:none!important;resize:none}
 /* Status bar rewrite: when the iPad keyboard opens, move the taskbar down behind the native keyboard.
    The keyboard belongs to iPadOS and cannot be assigned a web z-index. */
-#mb{transform:translate3d(0,var(--taskbar-keyboard-shift,0px),0);transition:transform .08s linear}
-#dk{transform:translate3d(-50%,var(--dock-keyboard-shift,0px),0);transition:transform .08s linear}
-.voice-keyboard-open #mb{z-index:1!important;pointer-events:none!important}
-.voice-keyboard-open #dk{z-index:1!important;pointer-events:none!important}
+#mb{transform:translate3d(0,0,0);transition:none}
+#dk{transform:translate3d(-50%,0,0);transition:none}
+.voice-keyboard-open #mb,.voice-keyboard-open #dk{display:none!important}
 .voice-keyboard-open .win.voice-kbd-fit{z-index:1000!important}
 .voice-keyboard-open #pw{z-index:9000!important}
 .wb{width:100%;max-width:100%;min-width:0}
@@ -424,9 +423,13 @@ function syncVoiceKeyboardLayout(){
  const keyboardOverlap=Math.max(0,voiceViewportMaxHeight-visibleHeight);
  const keyboardOpen=activeVoice&&keyboardOverlap>Math.max(140,voiceViewportMaxHeight*.18);
  document.body.classList.toggle('voice-keyboard-open',keyboardOpen);
- const shift=keyboardOpen?Math.max(0,keyboardOverlap):0;
- document.documentElement.style.setProperty('--taskbar-keyboard-shift',shift+'px');
- document.documentElement.style.setProperty('--dock-keyboard-shift',shift+'px');
+ /* Requested iPad behavior: hide the desktop taskbar while the native keyboard is visible. */
+ const taskbar=document.getElementById('mb');
+ const dock=document.getElementById('dk');
+ if(taskbar)taskbar.style.setProperty('display',keyboardOpen?'none':'flex','important');
+ if(dock)dock.style.setProperty('display',keyboardOpen?'none':'flex','important');
+ document.documentElement.style.setProperty('--taskbar-keyboard-shift','0px');
+ document.documentElement.style.setProperty('--dock-keyboard-shift','0px');
  if(!voiceWindow)return;
  if(keyboardOpen){
   const leftOffset=vv?vv.offsetLeft:0;
