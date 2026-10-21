@@ -148,6 +148,23 @@ body{background:#080a16}
 @media(max-width:390px){#lgb{display:none!important}#deskWidget{width:calc(100vw - 102px)}#dk{gap:4px;padding:6px}#dk button{width:37px;height:37px;font-size:20px}}
 
 
+/* ---------- Layout width guard: prevent app/window horizontal overflow ---------- */
+.win{max-width:calc(100vw - 16px);min-width:min(260px,calc(100vw - 12px))}
+.win.mx{left:8px!important;right:8px!important;min-width:0!important;max-width:none!important;resize:none}
+.wb{width:100%;max-width:100%;min-width:0}
+.games-app{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
+.games-head,.games-grid,.game-player,.game-playerbar,.game-framebox{min-width:0;max-width:100%}
+.games-grid{width:100%;grid-template-columns:repeat(2,minmax(0,1fr))}
+.game-tile{min-width:0;max-width:100%;overflow:hidden}
+.game-info,.game-info strong,.game-info small{min-width:0;max-width:100%;overflow-wrap:anywhere}
+.game-framebox{width:100%}
+.game-frame{width:100%;max-width:100%}
+@media(max-width:700px){
+ .win{max-width:calc(100vw - 12px)}
+ .win.mx{left:5px!important;right:5px!important;min-width:0!important;max-width:none!important}
+ .games-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+ 
 /* ---------- Game launcher cards ---------- */
 .games-app{padding:16px;background:linear-gradient(145deg,rgba(15,22,44,.96),rgba(26,19,48,.92));color:#f8fafc;min-height:100%;font-family:inherit}
 .games-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
