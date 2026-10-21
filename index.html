@@ -302,6 +302,9 @@ html,body{touch-action:pan-x pan-y!important;overscroll-behavior:none!important}
  #mb{height:54px!important;min-height:54px!important;padding-bottom:env(safe-area-inset-bottom,0px)!important}
  #dk{bottom:61px!important;gap:5px!important;max-width:calc(100vw - 12px)!important}
 }
+
+/* Hide the two desktop decorations circled by the user */
+#desktop .brand-stamp,#desktop #deskWidget{display:none!important}
 </style></head><body class="lg">
 <svg width="0" height="0" style="position:absolute"><filter id="lq" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".012 .018" numOctaves="2" seed="7" result="n"/><feGaussianBlur in="n" stdDeviation="3" result="b"/><feDisplacementMap in="SourceGraphic" in2="b" scale="55" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <div id="scr"></div>
