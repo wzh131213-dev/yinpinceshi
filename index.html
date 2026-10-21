@@ -312,6 +312,13 @@ html,body{touch-action:pan-x pan-y!important;overscroll-behavior:none!important}
 #desktopApps .desk-icon{position:absolute!important;left:0;top:0;margin:0;pointer-events:auto!important;touch-action:none!important;user-select:none!important;-webkit-user-select:none!important;}
 #desktopApps .desk-icon.dragging{z-index:20!important;cursor:grabbing!important;background:rgba(255,255,255,.2)!important;border-color:rgba(255,255,255,.35)!important;transition:none!important;}
 @media(max-width:700px){#desktopApps{inset:0!important}#desktopApps .desk-icon{width:65px!important;min-height:68px!important}}
+
+/* iPad virtual keyboard: fit the active voice window to the real visual viewport */
+.win.voice-kbd-fit{
+ position:fixed!important;inset:auto!important;top:var(--voice-vv-top,4px)!important;left:var(--voice-vv-left,4px)!important;right:auto!important;bottom:auto!important;
+ width:var(--voice-vv-width,calc(100vw - 8px))!important;height:var(--voice-vv-height,calc(100vh - 8px))!important;
+ min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;resize:none!important;animation:none!important;transform:none!important;border-radius:10px!important
+}
 </style></head><body class="lg">
 <svg width="0" height="0" style="position:absolute"><filter id="lq" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".012 .018" numOctaves="2" seed="7" result="n"/><feGaussianBlur in="n" stdDeviation="3" result="b"/><feDisplacementMap in="SourceGraphic" in2="b" scale="55" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <div id="scr"></div>
@@ -399,13 +406,45 @@ function dock(){
  document.querySelectorAll('#dk button').forEach(b=>b.classList.toggle('on',b.dataset.id in W))
 }
 function foc(w){document.querySelectorAll('.win').forEach(x=>x.classList.remove('f'));w.classList.add('f');w.style.zIndex=++z;dock()}
+let voiceViewportMaxHeight=window.visualViewport?window.visualViewport.height:window.innerHeight;
 function syncVoiceKeyboardLayout(){
- const available=screen.availHeight||innerHeight;
- const keyboardOpen=innerHeight<available*.58&&W.voice&&W.voice.classList.contains('f')&&W.voice.style.display!=='none';
- document.body.classList.toggle('voice-keyboard-open',!!keyboardOpen);
+ const vv=window.visualViewport;
+ const visibleHeight=vv?vv.height:window.innerHeight;
+ if(!Number.isFinite(voiceViewportMaxHeight)||voiceViewportMaxHeight<=0)voiceViewportMaxHeight=visibleHeight;
+ if(visibleHeight>voiceViewportMaxHeight)voiceViewportMaxHeight=visibleHeight;
+ const voiceWindow=W.voice;
+ const activeVoice=!!(voiceWindow&&voiceWindow.isConnected&&voiceWindow.classList.contains('f')&&voiceWindow.style.display!=='none');
+ const keyboardOpen=activeVoice&&(voiceViewportMaxHeight-visibleHeight)>Math.max(140,voiceViewportMaxHeight*.18);
+ document.body.classList.toggle('voice-keyboard-open',keyboardOpen);
+ if(!voiceWindow)return;
+ if(keyboardOpen){
+  const leftOffset=vv?vv.offsetLeft:0;
+  const topOffset=vv?vv.offsetTop:0;
+  const visibleWidth=vv?vv.width:window.innerWidth;
+  const top=Math.max(0,topOffset+4);
+  const left=Math.max(0,leftOffset+4);
+  const width=Math.max(1,visibleWidth-8);
+  const height=Math.max(120,visibleHeight-Math.max(0,topOffset)-8);
+  voiceWindow.style.setProperty('--voice-vv-top',top+'px');
+  voiceWindow.style.setProperty('--voice-vv-left',left+'px');
+  voiceWindow.style.setProperty('--voice-vv-width',width+'px');
+  voiceWindow.style.setProperty('--voice-vv-height',height+'px');
+  voiceWindow.classList.add('voice-kbd-fit');
+ }else{
+  voiceWindow.classList.remove('voice-kbd-fit');
+ }
 }
 addEventListener('resize',syncVoiceKeyboardLayout,{passive:true});
-if(window.visualViewport)window.visualViewport.addEventListener('resize',syncVoiceKeyboardLayout,{passive:true});
+if(window.visualViewport){
+ window.visualViewport.addEventListener('resize',syncVoiceKeyboardLayout,{passive:true});
+ window.visualViewport.addEventListener('scroll',syncVoiceKeyboardLayout,{passive:true});
+}
+addEventListener('orientationchange',()=>{
+ setTimeout(()=>{
+  voiceViewportMaxHeight=window.visualViewport?window.visualViewport.height:window.innerHeight;
+  syncVoiceKeyboardLayout();
+ },300);
+},{passive:true});
 
 function launch(id,arg){
  let w=W[id];
